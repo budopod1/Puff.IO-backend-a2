@@ -5,7 +5,7 @@ import shortsocket
 from state import State
 from threading import Thread
 # from http import HTTPStatus
-from timer import Time
+# from timer import Time
 # from shortsocket import Array
 
 
@@ -34,11 +34,9 @@ async def main(websocket):
             print([byte for byte in message])
         response = client.render()
         #print(response)
-        timer = Time()
         packet = create_packet(
             response
         )
-        print(timer.time())
         # print(shortsocket.decode(packet[1:]))
         # print(len(shortsocket.encode(response)), len(str(response)))
         await websocket.send(packet)
