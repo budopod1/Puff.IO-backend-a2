@@ -4,7 +4,7 @@ import json
 import shortsocket
 from state import State
 from threading import Thread
-from http import HTTPStatus
+# from http import HTTPStatus
 from timer import Time
 # from shortsocket import Array
 
@@ -50,9 +50,11 @@ def ticking():
         state.tick()
 
 
+"""
 async def health_check(path, request_headers):
     if path != "/ws":
         return HTTPStatus.FOUND, {"Location": "https://puffio.repl.co" + path}, b""
+"""
 
 
 async def start():
