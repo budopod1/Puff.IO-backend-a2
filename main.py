@@ -34,14 +34,19 @@ async def serve(websocket):
             keys = [key for key in message] # looks like no change, but bytes iterate weirdly
         # if message:
         #     print([byte for byte in message])
-        response = client.tick(keys)
-        #print(response)
-        packet = create_packet(
-            response
-        )
-        # print(shortsocket.decode(packet[1:]))
-        # print(len(shortsocket.encode(response)), len(str(response)))
-        await websocket.send(packet)
+        client.got_keys(keys)
+        response = client.consume_frame()
+        if response:
+            #print(response)
+            packet = create_packet(
+                response
+            )
+            # print(shortsocket.decode(packet[1:]))
+            # print(len(shortsocket.encode(response)), len(str(response)))
+            await websocket.send(packet)
+        else:
+            # print(":(")
+            await websocket.send("F")
 
 
 def ticking():

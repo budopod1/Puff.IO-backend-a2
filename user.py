@@ -19,6 +19,8 @@ class User:
         self.veiw_buffer = 1
         self.timer = Timer()
 
+        self.frame = None
+
     def change_server(self, server):
         if self.server:
             self.server.entities.remove(self.player)
@@ -27,8 +29,10 @@ class User:
         self.server = server
         self.remembered_tilemap = {}
     
-    def tick(self, keys): # fix changing server
+    def create_frame(self): # fix changing server
         # self.timer.tick()
+        if self.frame:
+            return
         
         player_x = self.player.x
         player_y = self.player.y
@@ -61,7 +65,7 @@ class User:
                 ))
         
         entities = self.server.entities
-        return Array([
+        self.frame = Array([
             Array([tile[0][0] for tile in send_tiles], dtype="int32"),
             Array([tile[0][1] for tile in send_tiles], dtype="int32"),
             Array([tile[1] for tile in send_tiles], dtype="int8"),
@@ -70,6 +74,11 @@ class User:
             Array([entity.get_type() for entity in entities], dtype="int8"),
             Array([player_x, player_y], dtype="float32")
         ])
+
+    def consume_frame(self):
+        frame = self.frame
+        self.frame = None
+        return frame
     
-    def keys_got(self, keys):
+    def got_keys(self, keys):
         self.keys_down = keys
