@@ -35,7 +35,8 @@ async def serve(websocket):
         # if message:
         #     print([byte for byte in message])
         client.got_keys(keys)
-        response = client.consume_frame()
+        # client.create_frame()
+        response = client.frame()
         if response:
             #print(response)
             packet = create_packet(

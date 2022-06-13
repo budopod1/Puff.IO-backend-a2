@@ -18,8 +18,6 @@ class User:
         self.veiw_width = self.max_ratio * self.veiw_height
         self.veiw_buffer = 1
         self.timer = Timer()
-        
-        self.frame_buffer = []
 
     def change_server(self, server):
         if self.server:
@@ -29,13 +27,15 @@ class User:
         self.server = server
         self.remembered_tilemap = {}
     
-    def create_frame(self): # fix changing server
-        # self.timer.tick()
-        if len(self.frame_buffer) == 2:
-            return
+    def frame(self): # fix changing server
+        self.timer.tick()
+
+        entities = {
+            id(entity): (entity.x, entity.y, entity.get_type())
+            for entity in self.server.entities
+        }
         
-        player_x = self.player.x
-        player_y = self.player.y
+        player_x, player_y, _ = entities[id(self.player)]
         seen_tiles = [
             (x, y)
             for x in range(
@@ -63,23 +63,16 @@ class User:
                     tile_pos,
                     real_tile.get_type() if real_tile else 0
                 ))
-        
-        entities = self.server.entities
-        self.frame_buffer.append(Array([
+                
+        return Array([
             Array([tile[0][0] for tile in send_tiles], dtype="int32"),
             Array([tile[0][1] for tile in send_tiles], dtype="int32"),
             Array([tile[1] for tile in send_tiles], dtype="int8"),
-            Array([entity.x for entity in entities], dtype="float32"),
-            Array([entity.y for entity in entities], dtype="float32"),
-            Array([entity.get_type() for entity in entities], dtype="int8"),
+            Array([entity[0] for entity in entities.values()], dtype="float32"),
+            Array([entity[1] for entity in entities.values()], dtype="float32"),
+            Array([entity[2] for entity in entities.values()], dtype="int8"),
             Array([player_x, player_y], dtype="float32")
-        ]))
-
-    def consume_frame(self):
-        if self.frame_buffer:
-            return self.frame_buffer.pop(0)
-        else:
-            return None
+        ])
     
     def got_keys(self, keys):
         self.keys_down = keys

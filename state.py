@@ -38,5 +38,5 @@ class State:
         for server in self.servers:
             server.tick()
             
-        for user in self.users.values():
-            user.create_frame()
+        # for user in list(self.users.values()):
+        #     pass #user.create_frame()
