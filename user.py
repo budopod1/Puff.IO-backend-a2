@@ -6,7 +6,7 @@ from timer import Timer
 
 class User:
     def __init__(self, server, username):
-        self.player = Player(server, (0, 2))
+        self.player = Player(server, (0, 2), user=self)
         self.server = None
         self.change_server(server)
         self.username = username

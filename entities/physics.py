@@ -4,9 +4,10 @@ from entities.entity import Entity
 class Physics(Entity):
     def __init__(self, *args):
         super().__init__(*args)
-        self.xv, self.yv = (0, 0)
-        self.xg, self.yg = (0, -2)
-        self.xd, self.yd = (0.01, 0.01)
+        self.xv, self.yv = (0, 0) # Velocity
+        self.xg, self.yg = (0, -2) # Gravity
+        self.xd, self.yd = (0.01, 0.01) # Drag
+        self.xc, self.yc = (False, False)
         collider = [
             (0, -1)
         ]
@@ -24,16 +25,20 @@ class Physics(Entity):
 
     def tick(self):
         time_delta = self.state.timer.time_delta
+        
+        self.xc, self.yc = (False, False)
 
         new_x = self.x + self.xv * time_delta
         if not self.collides((new_x, self.y)):
             self.x = new_x
         else:
+            self.xc = True
             self.xv = 0
         new_y = self.y +self.yv * time_delta
         if not self.collides((self.x, new_y)):
             self.y = new_y
         else:
+            self.yc = True
             self.yv = 0
 
         self.xv += self.xg * time_delta
