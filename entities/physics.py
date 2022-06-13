@@ -28,9 +28,13 @@ class Physics(Entity):
         new_x = self.x + self.xv * time_delta
         if not self.collides((new_x, self.y)):
             self.x = new_x
+        else:
+            self.xv = 0
         new_y = self.y +self.yv * time_delta
         if not self.collides((self.x, new_y)):
             self.y = new_y
+        else:
+            self.yv = 0
 
         self.xv += self.xg * time_delta
         self.yv += self.yg * time_delta

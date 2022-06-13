@@ -1,8 +1,8 @@
 from server import Server
-from client import Client
+# from client import Client
 from user import User
 from timer import Timer
-from time import sleep
+# from time import sleep
 
 
 class State:
@@ -23,15 +23,16 @@ class State:
         self.users[username] = new_user
         return new_user
 
-    def create_client(self, user):
-        new_client = Client(user)
-        return new_client
+    # def create_client(self, user):
+    #     new_client = Client(user)
+    #     return new_client
 
     def tick(self):
         self.timer.tick()
 
         # print(self.timer.fps())
         if self.timer.fps() < 10:
+            # If lagging, wait til performance improves
             return
         
         for server in self.servers:

@@ -22,17 +22,19 @@ def create_packet(data):
     return b"P" + shortsocket.encode(data)
 
 
-async def main(websocket):
-    user = state.create_user("user1")
-    client = state.create_client(user)
+async def serve(websocket):
+    client = state.create_user("user1")
     async for message in websocket:
+        keys = []
         if message == "connect":
             await websocket.send(create_status({
                 "action": "connect"
             }))
-        if message:
-            print([byte for byte in message])
-        response = client.render()
+        else:
+            keys = [key for key in message] # looks like no change, but bytes iterate weirdly
+        # if message:
+        #     print([byte for byte in message])
+        response = client.tick(keys)
         #print(response)
         packet = create_packet(
             response
@@ -57,7 +59,7 @@ async def health_check(path, request_headers):
 
 async def start():
     async with websockets.serve(
-        main, 
+        serve, 
         "0.0.0.0", 
         80,
         # process_request=health_check,
@@ -65,19 +67,19 @@ async def start():
         await asyncio.Future()
 
 
-def setup():
+def main():
     global state, tick_thread
-    state = State()
-    
-    tick_thread = Thread(target=ticking)
-    tick_thread.start()
-    
-    asyncio.run(start())
-
-
-if __name__ == "__main__":
     try:
-        setup()
+        state = State()
+        
+        tick_thread = Thread(target=ticking)
+        tick_thread.start()
+        
+        asyncio.run(start())
     except Exception as e:
         del state
         raise e
+
+
+if __name__ == "__main__":
+    main()
