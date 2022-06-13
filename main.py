@@ -45,8 +45,7 @@ async def serve(websocket):
             # print(len(shortsocket.encode(response)), len(str(response)))
             await websocket.send(packet)
         else:
-            # print(":(")
-            await websocket.send("F")
+            await websocket.send("F") # in the chat
 
 
 def ticking():

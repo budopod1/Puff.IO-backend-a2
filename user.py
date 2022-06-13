@@ -18,8 +18,8 @@ class User:
         self.veiw_width = self.max_ratio * self.veiw_height
         self.veiw_buffer = 1
         self.timer = Timer()
-
-        self.frame = None
+        
+        self.frame_buffer = []
 
     def change_server(self, server):
         if self.server:
@@ -31,7 +31,7 @@ class User:
     
     def create_frame(self): # fix changing server
         # self.timer.tick()
-        if self.frame:
+        if len(self.frame_buffer) == 2:
             return
         
         player_x = self.player.x
@@ -65,7 +65,7 @@ class User:
                 ))
         
         entities = self.server.entities
-        self.frame = Array([
+        self.frame_buffer.append(Array([
             Array([tile[0][0] for tile in send_tiles], dtype="int32"),
             Array([tile[0][1] for tile in send_tiles], dtype="int32"),
             Array([tile[1] for tile in send_tiles], dtype="int8"),
@@ -73,12 +73,13 @@ class User:
             Array([entity.y for entity in entities], dtype="float32"),
             Array([entity.get_type() for entity in entities], dtype="int8"),
             Array([player_x, player_y], dtype="float32")
-        ])
+        ]))
 
     def consume_frame(self):
-        frame = self.frame
-        self.frame = None
-        return frame
+        if self.frame_buffer:
+            return self.frame_buffer.pop(0)
+        else:
+            return None
     
     def got_keys(self, keys):
         self.keys_down = keys
