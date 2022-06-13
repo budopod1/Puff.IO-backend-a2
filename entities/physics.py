@@ -5,7 +5,7 @@ class Physics(Entity):
     def __init__(self, *args):
         super().__init__(*args)
         self.xv, self.yv = (0, 0) # Velocity
-        self.xg, self.yg = (0, -2) # Gravity
+        self.xg, self.yg = (0, -4) # Gravity
         self.xd, self.yd = (0.01, 0.01) # Drag
         self.xc, self.yc = (False, False)
         collider = [

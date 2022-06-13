@@ -7,12 +7,12 @@ class Player(Physics):
         assert user
         self.user = user
 
-        self.jump_height = 3
+        self.jump_power = 4
 
     def tick(self):
         super().tick()
         if self.yc and 87 in self.user.keys_down:
-            self.yv = self.jump_height
+            self.yv = self.jump_power
     
     def get_type(self):
         return 1
