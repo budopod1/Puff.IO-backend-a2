@@ -9,20 +9,42 @@ class Player(Physics):
 
         self.jump_power = 4
         self.move_power = 4
+        self.collider = [
+            (0.2, -1),
+            (-0.2, -1),
+            (-1, 0),
+            (1, 0),
+            (0.2, 1),
+            (-0.2, 1),
+        ]
+
+        self.ground_pounding = False
+        self.ground_pound_speed = -5
 
     def tick(self):
         super().tick()
 
         time_delta = self.state.timer.time_delta
-        
-        if self.yc and 87 in self.user.keys_down:
-            self.yv = self.jump_power
 
-        if 65 in self.user.keys_down:
-            self.xv -= self.move_power * time_delta
+        if self.yc:
+            self.ground_pounding = False
 
-        if 68 in self.user.keys_down:
-            self.xv += self.move_power * time_delta
+        if self.ground_pounding:
+            self.yv = self.ground_pound_speed
+        else:
+            if self.yc and 87 in self.user.keys_down:
+                self.yv = self.jump_power
+    
+            if 65 in self.user.keys_down:
+                self.xv -= self.move_power * time_delta
+    
+            if 68 in self.user.keys_down:
+                self.xv += self.move_power * time_delta
+
+        if 83 in self.user.keys_down:
+            if self.ground_pounding:
+                self.xv = 0
+            self.ground_pounding = not self.ground_pounding
     
     def get_type(self):
         return 1

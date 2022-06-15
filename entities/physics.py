@@ -8,18 +8,14 @@ class Physics(Entity):
         self.xg, self.yg = (0, -4) # Gravity
         self.xd, self.yd = (0.01, 0.01) # Drag
         self.xc, self.yc = (False, False)
-        collider = [
-            (0, -1)
-        ]
         self.collider = [
-            (x * 0.5, y * 0.5) 
-            for x, y in collider
+            (0, -1)
         ]
 
     def collides(self, pos):
         x, y = pos
         for point_x, point_y in self.collider:
-            if self.server.collides((point_x + x, point_y + y)):
+            if self.server.collides((point_x * 0.5 + x, point_y * 0.5 + y)):
                 return True
         return False
 
