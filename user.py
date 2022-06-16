@@ -34,6 +34,7 @@ class User:
         entities = {
             id(entity): (entity.x, entity.y, entity.get_type())
             for entity in self.server.entities
+            if entity.enabled
         }
         
         player_x, player_y, _ = entities[id(self.player)]
@@ -87,4 +88,5 @@ class User:
         self.keys_down = keys
 
     def state_frame(self):
+        # print(self.timer.time())
         self.player.enabled = self.timer.time() < 10
