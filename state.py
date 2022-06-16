@@ -19,6 +19,7 @@ class State:
         return new_server
 
     def create_user(self, username):
+        assert username not in self.users, f"User {username} already exists"
         new_user = User(self.main_server, username)
         self.users[username] = new_user
         return new_user

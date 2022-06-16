@@ -7,8 +7,8 @@ class Player(Physics):
         assert user
         self.user = user
 
-        self.jump_power = 4
-        self.move_power = 4
+        self.jump_power = 7
+        self.move_power = 5
         self.collider = [
             (0.2, -1),
             (-0.2, -1),
@@ -19,7 +19,7 @@ class Player(Physics):
         ]
 
         self.ground_pounding = False
-        self.ground_pound_speed = -5
+        self.ground_pound_speed = -10
 
     def tick(self):
         super().tick()

@@ -15,14 +15,17 @@ class Timer:
         return 1 / self.time_delta
 
 
-class Time:
+class Stopwatch:
     def __init__(self):
-        self.start = perf_counter()
+        self.start()
+    
+    def start(self):
+        self.started = perf_counter()
 
     def time(self):
-        return perf_counter() - self.start
+        return perf_counter() - self.started
 
     def step(self, event):
         print(f"{event}: {self.time()}")
-        self.start = perf_counter()
+        self.start()
         

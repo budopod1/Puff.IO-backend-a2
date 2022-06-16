@@ -1,7 +1,7 @@
 from entities.player import Player
 from math import floor, ceil
 from shortsocket import Array
-from timer import Timer
+from timer import Stopwatch
 
 
 class User:
@@ -18,7 +18,7 @@ class User:
         self.veiw_height = 7
         self.veiw_width = self.max_ratio * self.veiw_height
         self.veiw_buffer = 1
-        self.timer = Timer()
+        self.timer = Stopwatch()
 
     def change_server(self, server):
         if self.server:
@@ -29,7 +29,7 @@ class User:
         self.remembered_tilemap = {}
     
     def render_frame(self): # fix changing server
-        self.timer.tick()
+        self.timer.start()
 
         entities = {
             id(entity): (entity.x, entity.y, entity.get_type())
@@ -87,4 +87,4 @@ class User:
         self.keys_down = keys
 
     def state_frame(self):
-        self.player.enabled = self.timer.time_delta < 10
+        self.player.enabled = self.timer.time() < 10
