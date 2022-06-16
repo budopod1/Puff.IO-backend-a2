@@ -23,6 +23,9 @@ class Player(Physics):
 
     def tick(self):
         super().tick()
+        
+        if not self.enabled:
+            return
 
         time_delta = self.state.timer.time_delta
 
@@ -41,10 +44,10 @@ class Player(Physics):
             if 68 in self.user.keys_down:
                 self.xv += self.move_power * time_delta
 
-        if 83 in self.user.keys_down:
+        if 83 in self.user.keys_just_down:
+            self.ground_pounding = not self.ground_pounding
             if self.ground_pounding:
                 self.xv = 0
-            self.ground_pounding = not self.ground_pounding
     
     def get_type(self):
         return 1

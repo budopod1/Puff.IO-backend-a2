@@ -3,6 +3,7 @@ class Entity:
         self.x, self.y = pos
         self.server = server
         self.state = server.state
+        self.enabled = True
 
     def get_type(self):
         return 0

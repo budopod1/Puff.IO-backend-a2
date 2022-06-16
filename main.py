@@ -25,6 +25,7 @@ def create_packet(data):
 async def serve(websocket):
     client = state.create_user("user1")
     async for message in websocket:
+        # time = Time()
         keys = []
         if message == "connect":
             await websocket.send(create_status({
@@ -32,19 +33,19 @@ async def serve(websocket):
             }))
         else:
             keys = [key for key in message] # looks like no change, but bytes iterate weirdly
-        # if message:
-        #     print([byte for byte in message])
-        client.got_keys(keys)
-        # client.create_frame()
-        response = client.frame()
+        # time.step("Proccess message")
+        client.client_frame(set(keys))
+        # time.step("Proccess keys")
+        response = client.render_frame()
+        # time.step("Create response")
         if response:
             #print(response)
             packet = create_packet(
                 response
             )
-            # print(shortsocket.decode(packet[1:]))
-            # print(len(shortsocket.encode(response)), len(str(response)))
+            # time.step("Serialize it")
             await websocket.send(packet)
+            # time.step("Send it")
         else:
             await websocket.send("F") # in the chat
 

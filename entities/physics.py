@@ -20,6 +20,9 @@ class Physics(Entity):
         return False
 
     def tick(self):
+        if not self.enabled:
+            return
+        
         time_delta = self.state.timer.time_delta
         
         self.xc, self.yc = (False, False)

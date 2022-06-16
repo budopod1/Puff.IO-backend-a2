@@ -31,12 +31,13 @@ class State:
         self.timer.tick()
 
         # print(self.timer.fps())
-        if self.timer.fps() < 10:
+        if self.timer.fps() < 30:
             # If lagging, wait til performance improves
             return
         
         for server in self.servers:
             server.tick()
             
-        # for user in list(self.users.values()):
+        for user in list(self.users.values()):
+            user.state_frame()
         #     pass #user.create_frame()

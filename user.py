@@ -11,7 +11,8 @@ class User:
         self.change_server(server)
         self.username = username
 
-        self.keys_down = []
+        self.keys_down = set()
+        self.keys_just_down = set()
         self.remembered_tilemap = {}
         self.max_ratio = 3
         self.veiw_height = 7
@@ -27,7 +28,7 @@ class User:
         self.server = server
         self.remembered_tilemap = {}
     
-    def frame(self): # fix changing server
+    def render_frame(self): # fix changing server
         self.timer.tick()
 
         entities = {
@@ -80,5 +81,10 @@ class User:
             Array([player_index], dtype="int8")
         ])
     
-    def got_keys(self, keys):
+    def client_frame(self, keys):
+        # self.timer.tick()
+        self.keys_just_down = keys - self.keys_just_down
         self.keys_down = keys
+
+    def state_frame(self):
+        self.player.enabled = self.timer.time_delta < 10

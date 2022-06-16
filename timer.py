@@ -21,4 +21,8 @@ class Time:
 
     def time(self):
         return perf_counter() - self.start
+
+    def step(self, event):
+        print(f"{event}: {self.time()}")
+        self.start = perf_counter()
         
