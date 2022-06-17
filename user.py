@@ -38,20 +38,20 @@ class User:
         }
         
         player_x, player_y, _ = entities[id(self.player)]
+        
+        x_min = (floor(player_x - self.veiw_width) 
+                - self.veiw_buffer)
+        x_max = (ceil(player_x + self.veiw_width) 
+                + 1 + self.veiw_buffer)
+        y_min = (floor(player_y - self.veiw_height) 
+                - self.veiw_buffer)
+        y_max = (ceil(player_y + self.veiw_height) 
+                + 1 + self.veiw_buffer)
+        
         seen_tiles = [
             (x, y)
-            for x in range(
-                floor(player_x - self.veiw_width) 
-                - self.veiw_buffer,
-                ceil(player_x + self.veiw_width) 
-                + 1 + self.veiw_buffer
-            )
-            for y in range(
-                floor(player_y - self.veiw_height) 
-                - self.veiw_buffer,
-                ceil(player_y + self.veiw_height) 
-                + 1 + self.veiw_buffer
-            )
+            for x in range(x_min, x_max)
+            for y in range(y_min, y_max)
         ]
         
         send_tiles = []
@@ -66,19 +66,25 @@ class User:
                     real_tile.get_type() if real_tile else 0
                 ))
 
-        entities = entities.items()
         player_index = None
-        for i, (entity_id, _) in enumerate(entities):
+        for i, (entity_id, _) in enumerate(entities.items()):
             if entity_id == id(self.player):
                 player_index = i
+                
+        entities = [
+            (x, y, etype)
+            for _, (x, y, etype) in entities.items()
+            if x_min <= x <= x_max
+            if y_min <= y <= y_max
+        ]
         
         return Array([
             Array([tile[0][0] for tile in send_tiles], dtype="int32"),
             Array([tile[0][1] for tile in send_tiles], dtype="int32"),
             Array([tile[1] for tile in send_tiles], dtype="int8"),
-            Array([entity[0] for _, entity in entities], dtype="float32"),
-            Array([entity[1] for _, entity in entities], dtype="float32"),
-            Array([entity[2] for _, entity in entities], dtype="int8"),
+            Array([entity[0] for entity in entities], dtype="float32"),
+            Array([entity[1] for entity in entities], dtype="float32"),
+            Array([entity[2] for entity in entities], dtype="int8"),
             Array([player_index], dtype="int8")
         ])
     
