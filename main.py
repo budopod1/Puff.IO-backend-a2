@@ -5,6 +5,7 @@ import shortsocket
 from state import State
 from threading import Thread
 from uuid import uuid4
+from websockets.exceptions import WebSocketException
 # from http import HTTPStatus
 # from timer import Time
 # from shortsocket import Array
@@ -24,31 +25,34 @@ def create_packet(data):
 
 
 async def serve(websocket):
-    client = state.create_user(uuid4())
-    async for message in websocket:
-        # time = Time()
-        keys = []
-        if message == "connect":
-            await websocket.send(create_status({
-                "action": "connect"
-            }))
-        else:
-            keys = [key for key in message] # looks like no change, but bytes iterate weirdly
-        # time.step("Proccess message")
-        client.client_frame(set(keys))
-        # time.step("Proccess keys")
-        response = client.render_frame()
-        # time.step("Create response")
-        if response:
-            #print(response)
-            packet = create_packet(
-                response
-            )
-            # time.step("Serialize it")
-            await websocket.send(packet)
-            # time.step("Send it")
-        else:
-            await websocket.send("F") # in the chat
+    try:
+        client = state.create_user(uuid4())
+        async for message in websocket:
+            # time = Time()
+            keys = []
+            if message == "connect":
+                await websocket.send(create_status({
+                    "action": "connect"
+                }))
+            else:
+                keys = [key for key in message] # looks like no change, but bytes iterate weirdly
+            # time.step("Proccess message")
+            client.client_frame(set(keys))
+            # time.step("Proccess keys")
+            response = client.render_frame()
+            # time.step("Create response")
+            if response:
+                #print(response)
+                packet = create_packet(
+                    response
+                )
+                # time.step("Serialize it")
+                await websocket.send(packet)
+                # time.step("Send it")
+            else:
+                await websocket.send("F") # in the chat
+    except WebSocketException:
+        await websocket.close()
 
 
 def ticking():
