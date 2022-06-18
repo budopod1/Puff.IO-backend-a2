@@ -20,15 +20,14 @@ def create_status(data):
     return "S" + json.dumps(data)
 
 
-def create_packet(data):
-    return b"P" + shortsocket.encode(data)
+def create_packet(data, response):
+    return (b"R" if response else b"N") + shortsocket.encode(data)
 
 
 async def serve(websocket):
     try:
         client = state.create_user(uuid4())
         async for message in websocket:
-            # time = Time()
             keys = []
             if message == "connect":
                 await websocket.send(create_status({
@@ -36,21 +35,23 @@ async def serve(websocket):
                 }))
             else:
                 keys = [key for key in message] # looks like no change, but bytes iterate weirdly
-            # time.step("Proccess message")
-            client.client_frame(set(keys))
-            # time.step("Proccess keys")
-            response = client.render_frame()
-            # time.step("Create response")
-            if response:
-                #print(response)
-                packet = create_packet(
-                    response
-                )
-                # time.step("Serialize it")
-                await websocket.send(packet)
-                # time.step("Send it")
-            else:
-                await websocket.send("F") # in the chat
+            for i in range(5):
+                # time = Time()
+                # time.step("Proccess message")
+                client.client_frame(set(keys))
+                # time.step("Proccess keys")
+                response = client.render_frame()
+                # time.step("Create response")
+                if response:
+                    #print(response)
+                    packet = create_packet(
+                        response, i == 0
+                    )
+                    # time.step("Serialize it")
+                    await websocket.send(packet)
+                    # time.step("Send it")
+                else:
+                    await websocket.send("F") # in the chat
     except WebSocketException:
         await websocket.close()
 
