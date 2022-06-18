@@ -1,15 +1,20 @@
+from worldgen import WorldGen
+
+
 class Server:
     def __init__(self, state):
         self.state = state
         self.entities = []
         self.tilemap = {}
+        self.worldgen = WorldGen(self.tilemap)
         from tiles.grass import Grass; self.set_tile((0, 0), Grass()) # temp
 
     def get_tile(self, pos):
         if pos in self.tilemap:
             return self.tilemap[pos]
         else:
-            return None
+            self.worldgen.generate(pos)
+            return self.tilemap[pos]
 
     def set_tile(self, pos, tile):
         self.tilemap[pos] = tile
