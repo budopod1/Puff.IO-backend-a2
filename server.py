@@ -7,7 +7,6 @@ class Server:
         self.entities = []
         self.tilemap = {}
         self.worldgen = WorldGen(self.tilemap)
-        from tiles.grass import Grass; self.set_tile((0, 0), Grass()) # temp
 
     def get_tile(self, pos):
         if pos in self.tilemap:
