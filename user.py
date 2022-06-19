@@ -2,6 +2,7 @@ from entities.player import Player
 from math import floor, ceil
 from shortsocket import Array
 from timer import Stopwatch
+from functools import lru_cache
 
 
 class User:
@@ -19,6 +20,29 @@ class User:
         self.veiw_width = self.max_ratio * self.veiw_height
         self.veiw_buffer = 1
         self.timer = Stopwatch()
+        self.used_ids = []
+
+    @lru_cache(maxsize=255)
+    def get_entity_id(self, entity):
+        new_id = entity.get_type() * 16 - 126
+        incremented = 0
+        while new_id in self.used_ids:
+            new_id += 1
+            incremented = 1
+            if incremented == 15:
+                break
+        return new_id
+
+    def check_entity_ids(self):
+        for i in range(16):
+            ids_for_etype = [
+                i * 16 - 126 + j in self.used_ids 
+                for j in range(16)
+            ]
+            if all(ids_for_etype):
+                self.used_ids = []
+                self.get_id.clear_cache()
+                return
 
     def change_server(self, server):
         if self.server:
@@ -31,8 +55,10 @@ class User:
     def render_frame(self): # fix changing server
         self.timer.start()
 
+        self.check_entity_ids()
         entities = {
-            id(entity): (entity.x, entity.y, entity.get_type())
+            id(entity): (entity.x, entity.y,
+                         self.get_entity_id(entity))
             for entity in self.server.entities
             if entity.enabled
         }
@@ -65,7 +91,7 @@ class User:
                     tile_pos,
                     real_tile.get_type() if real_tile else 0
                 ))
-
+        
         player_index = None
         for i, (entity_id, _) in enumerate(entities.items()):
             if entity_id == id(self.player):
@@ -77,7 +103,7 @@ class User:
             if x_min <= x <= x_max
             if y_min <= y <= y_max
         ]
-        
+
         return Array([
             Array([tile[0][0] for tile in send_tiles], dtype="int32"),
             Array([tile[0][1] for tile in send_tiles], dtype="int32"),
