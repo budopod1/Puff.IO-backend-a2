@@ -31,6 +31,7 @@ class User:
             incremented = 1
             if incremented == 15:
                 break
+        self.used_ids.append(new_id)
         return new_id
 
     def check_entity_ids(self):
@@ -41,7 +42,7 @@ class User:
             ]
             if all(ids_for_etype):
                 self.used_ids = []
-                self.get_id.clear_cache()
+                self.get_entity_id.cache_clear()
                 return
 
     def change_server(self, server):

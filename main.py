@@ -33,6 +33,8 @@ async def serve(websocket):
                 await websocket.send(create_status({
                     "action": "connect"
                 }))
+            elif message == "exit":
+                await websocket.close()
             else:
                 keys = [key for key in message] # looks like no change, but bytes iterate weirdly
             for i in range(5):
