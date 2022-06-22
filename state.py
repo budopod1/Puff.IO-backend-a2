@@ -32,9 +32,11 @@ class State:
         self.timer.tick()
 
         # print(self.timer.fps())
-        if self.timer.fps() < 30:
+        # print(self.timer.fps())
+        # if self.timer.fps() < 30:
+            # print("low fps!")
             # If lagging, wait til performance improves
-            return
+        #     return
         
         for server in self.servers:
             server.tick()

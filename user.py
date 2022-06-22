@@ -7,8 +7,9 @@ from functools import lru_cache
 
 class User:
     def __init__(self, server, username):
-        self.player = Player(server, (0, 2), user=self)
+        self.player = Player(server, (0, 0), user=self)
         self.server = None
+        self.user_positions = {}
         self.change_server(server)
         self.username = username
 
@@ -29,7 +30,7 @@ class User:
         while new_id in self.used_ids:
             new_id += 1
             incremented = 1
-            if incremented == 15:
+            if incremented == 14:
                 break
         self.used_ids.append(new_id)
         return new_id
@@ -47,7 +48,16 @@ class User:
 
     def change_server(self, server):
         if self.server:
+            self.user_positions[self.server] = (
+                self.player.x, 
+                self.player.y
+            )
             self.server.entities.remove(self.player)
+        if server in self.user_positions:
+            self.player.x, self.player.y = self.user_positions[server]
+        else:
+            self.player.x = 0
+            self.player.y = server.get_highest(0)
         # Make player store position over locations
         server.entities.append(self.player)
         self.server = server
@@ -63,7 +73,9 @@ class User:
             for entity in self.server.entities
             if entity.enabled
         }
-        
+
+        if id(self.player) not in entities:
+            return None
         player_x, player_y, _ = entities[id(self.player)]
         
         x_min = (floor(player_x - self.veiw_width) 

@@ -15,6 +15,12 @@ class Server:
             self.worldgen.generate(pos)
             return self.tilemap[pos]
 
+    def get_highest(self, x):
+        y = -10
+        while self.get_tile((x, y)):
+            y += 1
+        return y
+
     def set_tile(self, pos, tile):
         self.tilemap[pos] = tile
 

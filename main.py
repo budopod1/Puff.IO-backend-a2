@@ -7,7 +7,7 @@ from threading import Thread
 from uuid import uuid4
 from websockets.exceptions import WebSocketException
 # from http import HTTPStatus
-# from timer import Time
+# from timer import Stopwatch
 # from shortsocket import Array
 
 
@@ -38,19 +38,22 @@ async def serve(websocket):
             else:
                 keys = [key for key in message] # looks like no change, but bytes iterate weirdly
             for i in range(5):
-                # time = Time()
-                # time.step("Proccess message")
+                # time = Stopwatch()
                 client.client_frame(set(keys))
                 # time.step("Proccess keys")
                 response = client.render_frame()
+                # time.step("Render frame")
                 # time.step("Create response")
                 if response:
                     #print(response)
                     packet = create_packet(
                         response, i == 0
                     )
+                    # time.step("Serialize frame")
                     # time.step("Serialize it")
                     await websocket.send(packet)
+                    # time.step("Send frame")
+                    # print(time.total())
                     # time.step("Send it")
                 else:
                     await websocket.send("F") # in the chat
@@ -71,7 +74,7 @@ async def health_check(path, request_headers):
 """
 
 
-async def start():
+async def start_server():
     async with websockets.serve(
         serve, 
         "0.0.0.0", 
@@ -89,7 +92,7 @@ def main():
         tick_thread = Thread(target=ticking)
         tick_thread.start()
         
-        asyncio.run(start())
+        asyncio.run(start_server())
     except Exception as e:
         del state
         raise e

@@ -17,7 +17,11 @@ class Timer:
 
 class Stopwatch:
     def __init__(self):
+        self.real_start = perf_counter()
         self.start()
+
+    def total(self):
+        return perf_counter() - self.real_start
     
     def start(self):
         self.started = perf_counter()
