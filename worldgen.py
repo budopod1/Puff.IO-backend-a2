@@ -1,6 +1,7 @@
 import random
-from math import sin
+from wave import Wave
 from tiles.grass import Grass
+from tiles.stone import Stone
 
 
 class WorldGen: # https://www.desmos.com/calculator/tdpou4advi
@@ -9,28 +10,19 @@ class WorldGen: # https://www.desmos.com/calculator/tdpou4advi
         self.tilemap = tilemap
         self.rand_state = random.getstate()
         
-        self.wave_number = 100
-        self.wave_scale = 15
-        wave_max_offset = 20
-        
-        self.offsets = [
-            (random.random() - 0.5) * wave_max_offset * 2
-            for i in range(self.wave_number)
-        ]
+        self.grass_wave = Wave(100, 15, 100, 0)
 
-        self.coefficents = [
-            random.random()
-            for i in range(self.wave_number)
-        ]
+        self.stone_wave = Wave(100, 10, 100, -3)
 
     def generate(self, pos):
         x, y = pos
-        terrain_height = sum([
-            sin((x - offset) * coefficent) * self.wave_scale
-            for offset, coefficent in zip(self.offsets, self.coefficents)
-        ]) / self.wave_number
+        grass_height = self.grass_wave.generate(x)
+        stone_height = self.stone_wave.generate(x)
         block = None
-        if y < terrain_height:
-            block = Grass()
+        if y < grass_height:
+            if y < stone_height:
+                block = Stone()
+            else:
+                block = Grass()
         self.tilemap[pos] = block
         
