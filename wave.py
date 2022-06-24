@@ -20,6 +20,6 @@ class Wave:
 
     def generate(self, x):
         return sum([
-            sin((x - offset) * coefficent) * self.wave_scale
+            sin((x - offset) * coefficent)
             for offset, coefficent in zip(self.offsets, self.coefficents)
-        ]) / self.wave_number + self.height_offset
+        ]) / self.wave_number * self.wave_scale + self.height_offset

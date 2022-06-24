@@ -7,7 +7,7 @@ class Physics(Entity):
         self.xv, self.yv = (0, 0) # Velocity
         self.xg, self.yg = (0, -16) # Gravity
         self.xd, self.yd = (0.02, 0.02) # Drag
-        self.xc, self.yc = (False, False)
+        self.xc, self.yc = (False, False) # Collisions
         self.collider = [
             (0, -1)
         ]
@@ -15,7 +15,8 @@ class Physics(Entity):
     def collides(self, pos):
         x, y = pos
         for point_x, point_y in self.collider:
-            if self.server.collides((point_x * 0.5 + x, point_y * 0.5 + y)):
+            block = self.server.collides((point_x * 0.45 + x, point_y * 0.5 + y))
+            if block and block.COLLISION:
                 return True
         return False
 
