@@ -6,7 +6,7 @@ class Server:
         self.state = state
         self.entities = []
         self.tilemap = {}
-        self.worldgen = WorldGen(self.tilemap)
+        self.worldgen = WorldGen(self.tilemap, self.get_tile)
 
     def get_tile(self, pos):
         if pos in self.tilemap:

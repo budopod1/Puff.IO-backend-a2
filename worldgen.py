@@ -4,14 +4,15 @@ from tiles.grass import Grass
 from tiles.wood import Wood
 from tiles.leaves import Leaves
 from tiles.stone import Stone
-from math import floor
+from math import ceil, floor
 
 
 class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
-    def __init__(self, tilemap, seed=None):
+    def __init__(self, tilemap, get_tile, seed=0):
         self.seed = seed
         random.seed(seed)
         self.tilemap = tilemap
+        self.get_tile = get_tile
         
         self.grass_wave = Wave(100, 15, 100, 0)
 
@@ -31,7 +32,8 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
                 block = Stone()
             else:
                 block = Grass()
-        if floor(grass_height - y) == 0:
+        if floor(grass_height - y) == 0 and isinstance(self.get_tile((x, y - 1)), Grass):
+            self.tilemap[(x, y)] = Leaves()
             if random.random() < tree_prob:
                 for o in range(random.randint(5, 7)):
                     self.tilemap[(x, y + o)] = Wood()
