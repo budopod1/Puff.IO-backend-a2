@@ -103,26 +103,26 @@ class User:
                     tile_pos,
                     real_tile.get_type() if real_tile else 0
                 ))
+                
+        entities = {
+            eid: (x, y, etype)
+            for eid, (x, y, etype) in entities.items()
+            if x_min <= x <= x_max
+            if y_min <= y <= y_max
+        }
         
         player_index = None
         for i, (entity_id, _) in enumerate(entities.items()):
             if entity_id == id(self.player):
                 player_index = i
-                
-        entities = [
-            (x, y, etype)
-            for _, (x, y, etype) in entities.items()
-            if x_min <= x <= x_max
-            if y_min <= y <= y_max
-        ]
 
         return Array([
             Array([tile[0][0] for tile in send_tiles], dtype="int32"),
             Array([tile[0][1] for tile in send_tiles], dtype="int32"),
             Array([tile[1] for tile in send_tiles], dtype="int8"),
-            Array([entity[0] for entity in entities], dtype="float32"),
-            Array([entity[1] for entity in entities], dtype="float32"),
-            Array([entity[2] for entity in entities], dtype="int8"),
+            Array([entity[0] for entity in entities.values()], dtype="float32"),
+            Array([entity[1] for entity in entities.values()], dtype="float32"),
+            Array([entity[2] for entity in entities.values()], dtype="int8"),
             Array([player_index], dtype="int8")
         ])
     
