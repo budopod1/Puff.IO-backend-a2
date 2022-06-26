@@ -29,13 +29,13 @@ class Player(Physics):
 
         time_delta = self.state.timer.time_delta
 
-        if self.yc:
+        if self.grounded:
             self.ground_pounding = False
 
         if self.ground_pounding:
             self.yv = self.ground_pound_speed
         else:
-            if self.yc and 87 in self.user.keys_down:
+            if self.grounded and 87 in self.user.keys_down:
                 self.yv = self.jump_power
     
             if 65 in self.user.keys_down:
