@@ -44,8 +44,7 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
                 self.tilemap[(x + 1, y + o)] = Leaves()
                 self.tilemap[(x - 1, y + o)] = Leaves()
                 self.tilemap[(x, y + o + 1)] = Leaves()
-        if ceil(grass_height - y) == 0 and isinstance(self.get_tile((x, y - 1)), Grass):
-            if random.random() < flower_prob:
+            elif random.random() < flower_prob:
                 block = Flowers()
         self.tilemap[pos] = block
         

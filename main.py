@@ -6,7 +6,7 @@ from state import State
 from threading import Thread
 from uuid import uuid4
 from websockets.exceptions import WebSocketException
-# from http import HTTPStatus
+from http import HTTPStatus
 # from timer import Stopwatch
 # from shortsocket import Array
 
@@ -67,11 +67,9 @@ def ticking():
         state.tick()
 
 
-"""
 async def health_check(path, request_headers):
     if path != "/ws":
         return HTTPStatus.FOUND, {"Location": "https://puffio.repl.co" + path}, b""
-"""
 
 
 async def start_server():
@@ -79,7 +77,7 @@ async def start_server():
         serve, 
         "0.0.0.0", 
         80,
-        # process_request=health_check,
+        process_request=health_check,
     ):
         await asyncio.Future()
 
