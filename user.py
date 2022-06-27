@@ -74,7 +74,8 @@ class User:
             if entity.enabled
         }
 
-        assert id(self.player) in entities
+        if id(self.player) not in entities:
+            return None
         player_x, player_y, _ = entities[id(self.player)]
         
         x_min = (floor(player_x - self.veiw_width) 
