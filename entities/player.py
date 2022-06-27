@@ -27,6 +27,10 @@ class Player(Physics):
         if not self.enabled:
             return
 
+        press_ground_pound = 83 in self.user.keys_just_down
+        press_jump = 87 in self.user.keys_down
+        up_and_down = press_ground_pound and press_jump
+
         time_delta = self.state.timer.time_delta
 
         if self.grounded:
@@ -35,7 +39,7 @@ class Player(Physics):
         if self.ground_pounding:
             self.yv = self.ground_pound_speed
         else:
-            if self.grounded and 87 in self.user.keys_down:
+            if self.grounded and (press_jump and not up_and_down):
                 self.yv = self.jump_power
     
             if 65 in self.user.keys_down:
@@ -44,7 +48,7 @@ class Player(Physics):
             if 68 in self.user.keys_down:
                 self.xv += self.move_power * time_delta
 
-        if 83 in self.user.keys_just_down:
+        if press_ground_pound and not up_and_down:
             self.ground_pounding = not self.ground_pounding
             if self.ground_pounding:
                 self.xv = 0

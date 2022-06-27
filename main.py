@@ -29,16 +29,18 @@ async def serve(websocket):
         client = state.create_user(uuid4())
         keys = []
         async for message in websocket:
-            if message == "connect":
+            if isinstance(message, str):
+                message = message.encode("UTF-8")
+            if message == b"connect":
                 await websocket.send(create_status({
                     "action": "connect"
                 }))
-            elif message == "exit":
+            elif message == b"exit":
                 await websocket.close()
             else:
                 msg_type = message[0]
                 message = message[1:]
-                if msg_type == "K": # Keys
+                if msg_type == ord("K"): # Keys
                     keys = [key for key in message] # looks like data proccessing change, but bytes iterate weirdly
             for i in range(5):
                 # time = Stopwatch()
