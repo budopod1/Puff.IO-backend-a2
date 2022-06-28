@@ -15,7 +15,10 @@ class Physics(Entity):
     def collides(self, pos):
         x, y = pos
         for point_x, point_y in self.collider:
-            block = self.server.collides((point_x * 0.45 + x, point_y * 0.5 + y))
+            block = self.server.collides((
+                point_x * 0.45 + x, 
+                point_y * 0.45 - 0.05 + y
+            ))
             if block and block.COLLISION:
                 return True
         return False
