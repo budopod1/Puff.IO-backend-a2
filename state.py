@@ -24,23 +24,11 @@ class State:
         self.users[username] = new_user
         return new_user
 
-    # def create_client(self, user):
-    #     new_client = Client(user)
-    #     return new_client
-
     def tick(self):
         self.timer.tick()
-
-        # print(self.timer.fps())
-        # print(self.timer.fps())
-        # if self.timer.fps() < 30:
-            # print("low fps!")
-            # If lagging, wait til performance improves
-        #     return
         
         for server in self.servers:
             server.tick()
             
         for user in list(self.users.values()):
             user.state_frame()
-        #     pass #user.create_frame()

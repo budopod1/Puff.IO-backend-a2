@@ -43,23 +43,13 @@ async def serve(websocket):
                 if msg_type == ord("K"): # Keys
                     keys = [key for key in message] # looks like data proccessing change, but bytes iterate weirdly
             for i in range(5):
-                # time = Stopwatch()
                 client.client_frame(set(keys))
-                # time.step("Proccess keys")
                 response = client.render_frame()
-                # time.step("Render frame")
-                # time.step("Create response")
                 if response:
-                    #print(response)
                     packet = create_packet(
                         response, i == 0
                     )
-                    # time.step("Serialize frame")
-                    # time.step("Serialize it")
                     await websocket.send(packet)
-                    # time.step("Send frame")
-                    # print(time.total())
-                    # time.step("Send it")
                 else:
                     await websocket.send("F") # in the chat
     except WebSocketException:

@@ -63,7 +63,7 @@ class User:
         self.server = server
         self.remembered_tilemap = {}
     
-    def render_frame(self): # fix changing server
+    def render_frame(self):
         self.timer.start()
 
         self.check_entity_ids()
