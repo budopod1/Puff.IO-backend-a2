@@ -125,7 +125,7 @@ def decode_int32(data):
     return (data >> 1) * (-1 if data % 2 == 0 else 1) # (data % 2 == 0 ? -1 : 1);
 
 
-SMALLEST_EXPONENT = 10
+# SMALLEST_EXPONENT = 10
 
 
 def encode_float32(data): # IEEE-754

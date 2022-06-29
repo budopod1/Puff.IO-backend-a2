@@ -7,6 +7,7 @@ from threading import Thread
 from uuid import uuid4
 from websockets.exceptions import WebSocketException
 from http import HTTPStatus
+import struct
 # from timer import Stopwatch
 # from shortsocket import Array
 
@@ -28,6 +29,8 @@ async def serve(websocket):
     try:
         client = state.create_user(uuid4())
         keys = []
+        mouseX = 0
+        mouseY = 0
         async for message in websocket:
             if isinstance(message, str):
                 message = message.encode("UTF-8")
@@ -41,7 +44,10 @@ async def serve(websocket):
                 msg_type = message[0]
                 message = message[1:]
                 if msg_type == ord("K"): # Keys
-                    keys = [key for key in message] # looks like data proccessing change, but bytes iterate weirdly
+                    keys = [key for key in message] # looks like no change, but bytes iterate weirdly
+                elif msg_type == ord("M"):
+                    mouseX, = struct.unpack("f", message[:4])
+                    mouseY, = struct.unpack("f", message[4:])
             for i in range(5):
                 client.client_frame(set(keys))
                 response = client.render_frame()
