@@ -26,25 +26,7 @@ class User:
     @lru_cache(maxsize=255)
     def get_entity_id(self, entity):
         new_id = entity.get_type() * 16 - 126
-        incremented = 0
-        while new_id in self.used_ids:
-            new_id += 1
-            incremented = 1
-            if incremented == 14:
-                break
-        self.used_ids.append(new_id)
         return new_id
-
-    def check_entity_ids(self):
-        for i in range(16):
-            ids_for_etype = [
-                i * 16 - 126 + j in self.used_ids 
-                for j in range(16)
-            ]
-            if all(ids_for_etype):
-                self.used_ids = []
-                self.get_entity_id.cache_clear()
-                return
 
     def change_server(self, server):
         if self.server:
@@ -66,7 +48,7 @@ class User:
     def render_frame(self):
         self.timer.start()
 
-        self.check_entity_ids()
+        # self.check_entity_ids()
         entities = {
             id(entity): (entity.x, entity.y,
                          self.get_entity_id(entity))
