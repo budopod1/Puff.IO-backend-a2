@@ -46,8 +46,7 @@ async def serve(websocket):
                 if msg_type == ord("K"): # Keys
                     keys = [key for key in message] # looks like no change, but bytes iterate weirdly
                 elif msg_type == ord("M"):
-                    mouseX, = struct.unpack("f", message[:4])
-                    mouseY, = struct.unpack("f", message[4:])
+                    mouseX, mouseY = struct.unpack("ff", message)
             for i in range(5):
                 client.client_frame(set(keys))
                 response = client.render_frame()
