@@ -29,6 +29,7 @@ async def serve(websocket):
     try:
         client = state.create_user(uuid4())
         keys = []
+        mouse_buttons = set()
         mouseX = 0
         mouseY = 0
         async for message in websocket:
@@ -45,8 +46,16 @@ async def serve(websocket):
                 message = message[1:]
                 if msg_type == ord("K"): # Keys
                     keys = [key for key in message] # looks like no change, but bytes iterate weirdly
-                elif msg_type == ord("M"):
+                elif msg_type == ord("M"): # mouse Movement
                     mouseX, mouseY = struct.unpack("ff", message)
+                elif msg_type == ord("B"): # mouse Buttons
+                    msg = message[0]
+                    mouse_buttons = set()
+                    for i in list(range(3))[::-1]:
+                        n = 1 << i
+                        if n <= msg:
+                            msg -= n
+                            mouse_buttons.add(i)
             for i in range(5):
                 client.client_frame(set(keys))
                 response = client.render_frame()
