@@ -15,6 +15,13 @@ class User:
 
         self.keys_down = set()
         self.keys_just_down = set()
+        
+        self.mouse_buttons = set()
+        self.mouse_buttons_just_down = set()
+
+        self.mouse_x = 0
+        self.mouse_y = 0
+        
         self.remembered_tilemap = {}
         self.max_ratio = 3
         self.veiw_height = 7
@@ -109,10 +116,14 @@ class User:
             Array([player_index], dtype="int8")
         ])
     
-    def client_frame(self, keys):
+    def client_frame(self, keys, mouse_buttons, mouse_x, mouse_y):
         # self.timer.tick()
-        self.keys_just_down = keys - self.keys_just_down
+        self.keys_just_down = keys - self.keys_down
         self.keys_down = keys
+        self.mouse_buttons_just_down = mouse_buttons - self.mouse_buttons
+        self.mouse_buttons = mouse_buttons
+        self.mouse_x = self.player.x + mouse_x
+        self.mouse_y = self.player.y + mouse_y
 
     def state_frame(self):
         # print(self.timer.time())

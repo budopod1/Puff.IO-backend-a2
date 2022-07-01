@@ -23,10 +23,6 @@ class Player(Physics):
 
     def tick(self):
         super().tick()
-        
-        if not self.enabled:
-            return
-
         press_ground_pound = 83 in self.user.keys_just_down
         press_jump = 87 in self.user.keys_down
         up_and_down = press_ground_pound and press_jump

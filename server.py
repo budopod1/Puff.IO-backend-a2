@@ -9,11 +9,9 @@ class Server:
         self.worldgen = WorldGen(self.tilemap, self.get_tile)
 
     def get_tile(self, pos):
-        if pos in self.tilemap:
-            return self.tilemap[pos]
-        else:
+        if pos not in self.tilemap:
             self.worldgen.generate(pos)
-            return self.tilemap[pos]
+        return self.tilemap[pos]
 
     def get_highest(self, x):
         y = -10
@@ -26,7 +24,8 @@ class Server:
 
     def tick(self):
         for entity in self.entities:
-            entity.tick()
+            if entity.enabled:
+                entity.tick()
 
     def collides(self, pos):
         x, y = pos

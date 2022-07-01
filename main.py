@@ -28,10 +28,10 @@ def create_packet(data, response):
 async def serve(websocket):
     try:
         client = state.create_user(uuid4())
-        keys = []
+        keys = set()
         mouse_buttons = set()
-        mouseX = 0
-        mouseY = 0
+        mouse_x = 0
+        mouse_y = 0
         async for message in websocket:
             if isinstance(message, str):
                 message = message.encode("UTF-8")
@@ -45,9 +45,9 @@ async def serve(websocket):
                 msg_type = message[0]
                 message = message[1:]
                 if msg_type == ord("K"): # Keys
-                    keys = [key for key in message] # looks like no change, but bytes iterate weirdly
+                    keys = {key for key in message}
                 elif msg_type == ord("M"): # mouse Movement
-                    mouseX, mouseY = struct.unpack("ff", message)
+                    mouse_x, mouse_y = struct.unpack("ff", message)
                 elif msg_type == ord("B"): # mouse Buttons
                     msg = message[0]
                     mouse_buttons = set()
@@ -57,7 +57,9 @@ async def serve(websocket):
                             msg -= n
                             mouse_buttons.add(i)
             for i in range(5):
-                client.client_frame(set(keys))
+                client.client_frame(
+                    keys, mouse_buttons, mouse_x, mouse_y
+                )
                 response = client.render_frame()
                 if response:
                     packet = create_packet(
