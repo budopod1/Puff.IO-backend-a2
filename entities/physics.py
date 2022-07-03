@@ -12,7 +12,7 @@ class Physics(Entity):
             (0, -1)
         ]
 
-    def collides(self, pos):
+    def would_collide(self, pos):
         x, y = pos
         for point_x, point_y in self.collider:
             block = self.server.collides((
@@ -23,19 +23,28 @@ class Physics(Entity):
                 return True
         return False
 
+    def collides(self, pos):
+        x, y = pos
+        for point_x, point_y in self.collider:
+            collides_x = round(point_x * 0.45 + self.x) == x
+            collides_y = round(point_y * 0.45 - 0.05 + self.y) == y
+            if collides_x and collides_y:
+                return True
+        return False    
+
     def tick(self):
         time_delta = self.state.timer.time_delta
         
         self.grounded = False
 
         new_x = self.x + self.xv * time_delta
-        if not self.collides((new_x, self.y)):
+        if not self.would_collide((new_x, self.y)):
             self.x = new_x
         else:
             self.xv = 0
             
         new_y = self.y + self.yv * time_delta
-        if not self.collides((self.x, new_y)):
+        if not self.would_collide((self.x, new_y)):
             self.y = new_y
         else:
             if self.yv < 0:

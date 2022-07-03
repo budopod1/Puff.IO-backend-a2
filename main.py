@@ -55,7 +55,7 @@ async def serve(websocket):
                         n = 1 << i
                         if n <= msg:
                             msg -= n
-                            mouse_buttons.add(i)
+                            mouse_buttons.add(i + 1)
             for i in range(5):
                 client.client_frame(
                     keys, mouse_buttons, mouse_x, mouse_y
