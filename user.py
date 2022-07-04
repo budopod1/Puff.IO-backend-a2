@@ -46,7 +46,7 @@ class User:
             self.player.x, self.player.y = self.user_positions[server]
         else:
             self.player.x = 0
-            self.player.y = server.get_highest(0)
+            self.player.y = server.get_highest(0) + 0.01
         # Make player store position over locations
         server.entities.append(self.player)
         self.server = server
