@@ -1,6 +1,7 @@
 from entities.physics import Physics
 from math import sqrt
 from tiles.grass import Grass
+from timer import Cooldown
 
 
 class Player(Physics):
@@ -20,10 +21,12 @@ class Player(Physics):
             (-0.2, 1),
         ]
 
-        self.reach = 7
+        self.reach = 4
 
         self.ground_pounding = False
         self.ground_pound_speed = -10
+
+        self.break_cooldown = Cooldown()
 
     def tick(self):
         super().tick()
@@ -57,13 +60,32 @@ class Player(Physics):
         mouse_x = round(self.user.mouse_x)
         mouse_y = round(self.user.mouse_y)
         mouse_buttons = self.user.mouse_buttons
+        
         if 1 in mouse_buttons and self.can_place(mouse_x, mouse_y):
             self.place(mouse_x, mouse_y, self.selected_item())
 
+        if 3 in mouse_buttons and self.can_break(mouse_x, mouse_y):
+            self.break_(mouse_x, mouse_y)
+
     def can_place(self, x, y):
-        distance = sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
+        can_reach = self.can_reach(x, y)
         is_empty = not self.server.is_full((x, y))
-        return distance < self.reach and self.selected_item() and is_empty
+        return can_reach and self.selected_item() and is_empty
+
+    def can_break(self, x, y):
+        can_reach = self.can_reach(x, y)
+        break_cooled_down = self.break_cooldown.expired()
+        return self.server.collides((x, y)) and can_reach and break_cooled_down
+
+    def break_(self, x, y):
+        if self.server.get_tile((x, y)) is not None:
+            tile = self.server.get_tile((x, y))
+            self.server.set_tile((x, y), None)
+            self.break_cooldown.start(tile.BREAK_COOLDOWN)
+
+    def can_reach(self, x, y):
+        distance = sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
+        return distance < self.reach
 
     def selected_item(self):
         return Grass

@@ -32,4 +32,18 @@ class Stopwatch:
     def step(self, event):
         print(f"{event}: {self.time()}")
         self.start()
-        
+
+
+class Cooldown:
+    def __init__(self, time=0):
+        self.start(time)
+
+    def start(self, time=0):
+        self.time = time
+        self.reset()
+
+    def reset(self):
+        self.end = perf_counter() + self.time
+
+    def expired(self):
+        return perf_counter() > self.end
