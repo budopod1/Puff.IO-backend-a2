@@ -8,6 +8,7 @@ from uuid import uuid4
 from websockets.exceptions import WebSocketException
 from http import HTTPStatus
 import struct
+from admin import console
 # from timer import Stopwatch
 # from shortsocket import Array
 
@@ -15,6 +16,7 @@ import struct
 state = None
 
 tick_thread = None
+admin_thread = None
 
 
 def create_status(data):
@@ -94,12 +96,15 @@ async def start_server():
 
 
 def main():
-    global state, tick_thread
+    global state, tick_thread, admin_thread
     try:
         state = State()
         
         tick_thread = Thread(target=ticking)
         tick_thread.start()
+        
+        admin_thread = Thread(target=console, args=(state,))
+        admin_thread.start()
         
         asyncio.run(start_server())
     except Exception as e:

@@ -23,6 +23,9 @@ class Player(Physics):
 
         self.reach = 4
 
+        # I stole the name from minecraft, so what?
+        self.creative_mode = True 
+
         self.ground_pounding = False
         self.ground_pound_speed = -10
 
@@ -74,7 +77,7 @@ class Player(Physics):
 
     def can_break(self, x, y):
         can_reach = self.can_reach(x, y)
-        break_cooled_down = self.break_cooldown.expired()
+        break_cooled_down = self.break_cooldown.expired() or self.creative_mode
         return self.server.collides((x, y)) and can_reach and break_cooled_down
 
     def break_(self, x, y):
@@ -85,7 +88,7 @@ class Player(Physics):
 
     def can_reach(self, x, y):
         distance = sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
-        return distance < self.reach
+        return self.creative_mode or distance < self.reach
 
     def selected_item(self):
         return Grass
