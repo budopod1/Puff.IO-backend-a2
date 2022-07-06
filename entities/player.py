@@ -59,7 +59,7 @@ class Player(Physics):
             self.ground_pounding = not self.ground_pounding
             if self.ground_pounding:
                 self.xv = 0
-
+        
         mouse_x = round(self.user.mouse_x)
         mouse_y = round(self.user.mouse_y)
         mouse_buttons = self.user.mouse_buttons

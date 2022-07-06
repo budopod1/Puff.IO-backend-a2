@@ -1,20 +1,45 @@
 import traceback
+from entities.player import Player
 
 
 def exec_admin(command, state):
     admin_globals = {
         "state": state,
         "users": state.users,
-        "servers": state.servers
+        "servers": state.servers,
+        "fps": state.timer.fps()
     }
     if state.servers and state.users:
-        admin_globals = {
+        players = [
+            entity
+            for entity in state.servers[0].entities
+            if isinstance(entity, Player)
+        ]
+        admin_globals.update({
             "first_server": state.servers[0],
             "entities": state.servers[0].entities,
-            "first_player": state.servers[0].entities[0]
-        }
+            "tilemap": state.servers[0].tilemap,
+            "players": players,
+            "active_players": [
+                player
+                for player in players
+                if player.enabled
+            ],
+            "active_users": [
+                player.user
+                for player in players
+                if player.enabled
+            ]
+        })
+        if players:
+            admin_globals.update({
+                "first_player": players[0]
+            })
     try:
-        exec(command, admin_globals)
+        try:
+            print(eval(command, admin_globals))
+        except Exception:
+            exec(command, admin_globals)
     except Exception:
         print("Error in repl code:")
         print(traceback.format_exc())
@@ -43,9 +68,14 @@ Admin Console Help
 Start a Python instruction with a '/' to run it globals:
 * state
 * users
+* fps
 * servers
 * first_server
 * entities
+* tilemap
+* players
+* active_players
+* active_users
 * first_player
 (Some may not be present if they do not exist)
 
