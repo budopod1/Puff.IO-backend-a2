@@ -23,8 +23,10 @@ class Player(Physics):
 
         self.reach = 4
 
+        self.inventory = {}
+
         # I stole the name from minecraft, so what?
-        self.creative_mode = True 
+        self.creative_mode = True # Test this
 
         self.ground_pounding = False
         self.ground_pound_speed = -10
@@ -33,10 +35,17 @@ class Player(Physics):
 
     def tick(self):
         super().tick()
+
+        self.user.proccess_input()
         
         press_ground_pound = 83 in self.user.keys_just_down
         press_jump = 87 in self.user.keys_down
         up_and_down = press_ground_pound and press_jump
+
+        if 69 in self.user.keys_just_down:
+            if self.user.gui in [0, 1]:
+                self.user.gui = 1 - self.user.gui
+            return
 
         time_delta = self.state.timer.time_delta
 

@@ -21,6 +21,8 @@ class User:
 
         self.mouse_x = 0
         self.mouse_y = 0
+
+        self.input_buffer = (set(), set(), 0, 0)
         
         self.remembered_tilemap = {}
         self.max_ratio = 3
@@ -29,6 +31,8 @@ class User:
         self.veiw_buffer = 1
         self.timer = Stopwatch()
         self.used_ids = []
+
+        self.gui = 0
 
     @lru_cache(maxsize=255)
     def get_entity_id(self, entity):
@@ -54,6 +58,14 @@ class User:
     
     def render_frame(self):
         self.timer.start()
+        
+        if self.gui:
+            return Array([
+                Array([self.gui], dtype="int8"),
+                *{
+                    1: self.inventory_gui
+                }[self.gui]()
+            ])
 
         # self.check_entity_ids()
         entities = {
@@ -105,25 +117,41 @@ class User:
         for i, (entity_id, _) in enumerate(entities.items()):
             if entity_id == id(self.player):
                 player_index = i
-
+        
+        entities = entities.values()
         return Array([
             Array([tile[0][0] for tile in send_tiles], dtype="int32"),
             Array([tile[0][1] for tile in send_tiles], dtype="int32"),
             Array([tile[1] for tile in send_tiles], dtype="int8"),
-            Array([entity[0] for entity in entities.values()], dtype="float32"),
-            Array([entity[1] for entity in entities.values()], dtype="float32"),
-            Array([entity[2] for entity in entities.values()], dtype="int8"),
+            Array([entity[0] for entity in entities], dtype="float32"),
+            Array([entity[1] for entity in entities], dtype="float32"),
+            Array([entity[2] for entity in entities], dtype="int8"),
             Array([player_index], dtype="int8")
         ])
-    
-    def client_frame(self, keys, mouse_buttons, mouse_x, mouse_y):
-        # self.timer.tick()
+
+    def proccess_input(self):
+        keys, mouse_buttons, mouse_x, mouse_y = self.input_buffer
         self.keys_just_down = keys - self.keys_down
         self.keys_down = keys
         self.mouse_buttons_just_down = mouse_buttons - self.mouse_buttons
         self.mouse_buttons = mouse_buttons
         self.mouse_x = self.player.x + mouse_x
         self.mouse_y = self.player.y + mouse_y
+    
+    def client_frame(self, keys, mouse_buttons, mouse_x, mouse_y):
+        # self.timer.tick()
+        self.input_buffer = (keys, mouse_buttons, mouse_x, mouse_y)
+
+    def inventory_gui(self):
+        items = sorted(self.player.inventory)
+        amounts = [self.player.inventory[item] for item in items]
+        return Array([
+            Array([
+                Array([ord(char) for char in item], dtype="int8")
+                for item in items
+            ]),
+            Array(amounts, dtype="int8")
+        ])
 
     def state_frame(self):
         # print(self.timer.time())
