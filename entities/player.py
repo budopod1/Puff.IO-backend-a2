@@ -25,8 +25,8 @@ class Player(Physics):
 
         self.inventory = {}
 
-        # I stole the name from minecraft, so what?
-        self.creative_mode = True # Test this
+        # I stole the name from minceraft, so what?
+        self.creative_mode = False # Test this
 
         self.ground_pounding = False
         self.ground_pound_speed = -10
