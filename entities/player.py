@@ -26,7 +26,7 @@ class Player(Physics):
         self.inventory = {}
 
         # I stole the name from minceraft, so what?
-        self.creative_mode = False # Test this
+        self.mode = "survival"
 
         self.ground_pounding = False
         self.ground_pound_speed = -10
@@ -86,18 +86,27 @@ class Player(Physics):
 
     def can_break(self, x, y):
         can_reach = self.can_reach(x, y)
-        break_cooled_down = self.break_cooldown.expired() or self.creative_mode
+        creative = self.mode in ["creative"]
+        break_cooled_down = self.break_cooldown.expired() or creative
         return self.server.collides((x, y)) and can_reach and break_cooled_down
 
+    def collect_item(self, item):
+        self.inventory[item] = self.inventory.get(item, 0) + 1
+    
     def break_(self, x, y):
         if self.server.get_tile((x, y)) is not None:
             tile = self.server.get_tile((x, y))
+            tile_name = type(tile).__name__.lower()
             self.server.set_tile((x, y), None)
             self.break_cooldown.start(tile.BREAK_COOLDOWN)
+            survival = self.mode in ["survival"]
+            if survival:
+                self.collect_item(tile_name)
 
     def can_reach(self, x, y):
         distance = sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
-        return self.creative_mode or distance < self.reach
+        creative = self.mode in ["creative"]
+        return creative or distance < self.reach
 
     def selected_item(self):
         return Grass
