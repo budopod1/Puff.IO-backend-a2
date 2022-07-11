@@ -103,7 +103,7 @@ class User:
                 self.remembered_tilemap[tile_pos] = real_tile
                 send_tiles.append((
                     tile_pos,
-                    real_tile.get_type() if real_tile else 0
+                    real_tile.TYPE if real_tile else 0
                 ))
                 
         entities = {

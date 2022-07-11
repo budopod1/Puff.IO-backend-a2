@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "python-template"
+name = "repl_nix_backend"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["puffio <<>>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8.0,<3.9"
-websockets = "^10.3"
+python = "^3.8"
+bidict = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,10 +1,6 @@
 import random
 from wave import Wave
-from tiles.grass import Grass
-from tiles.wood import Wood
-from tiles.leaves import Leaves
-from tiles.stone import Stone
-from tiles.flowers import Flowers
+from tiles import Grass, Wood, Leaves, Stone, Flowers
 from math import ceil
 
 

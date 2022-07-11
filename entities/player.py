@@ -1,6 +1,6 @@
 from entities.physics import Physics
 from math import sqrt
-from tiles.grass import Grass
+from tiles import tile_names
 from timer import Cooldown
 
 
@@ -81,8 +81,10 @@ class Player(Physics):
 
     def can_place(self, x, y):
         can_reach = self.can_reach(x, y)
+        creative = self.mode in ["creative"]
+        selected = self.selected_item() or creative
         is_empty = not self.server.is_full((x, y))
-        return can_reach and self.selected_item() and is_empty
+        return can_reach and selected and is_empty
 
     def can_break(self, x, y):
         can_reach = self.can_reach(x, y)
@@ -96,7 +98,7 @@ class Player(Physics):
     def break_(self, x, y):
         if self.server.get_tile((x, y)) is not None:
             tile = self.server.get_tile((x, y))
-            tile_name = type(tile).__name__.lower()
+            tile_name = tile_names[type(tile)]
             self.server.set_tile((x, y), None)
             self.break_cooldown.start(tile.BREAK_COOLDOWN)
             survival = self.mode in ["survival"]
@@ -109,11 +111,18 @@ class Player(Physics):
         return creative or distance < self.reach
 
     def selected_item(self):
-        return Grass
+        if self.inventory:
+            return sorted(self.inventory)[0]
+        return None
 
     def place(self, x, y, item):
         if self.server.get_tile((x, y)) is None:
-            self.server.set_tile((x, y), item())
+            survival = self.mode in ["survival"]
+            if survival:
+                self.inventory[item] -= 1
+                if self.inventory[item] == 0:
+                    del self.inventory[item]
+            self.server.set_tile((x, y), tile_names.inverse[item]())
     
     def get_type(self):
         return 1
