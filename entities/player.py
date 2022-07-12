@@ -24,6 +24,7 @@ class Player(Physics):
         self.reach = 4
 
         self.inventory = {}
+        self.selected = 1
 
         # I stole the name from minceraft, so what?
         self.mode = "survival"

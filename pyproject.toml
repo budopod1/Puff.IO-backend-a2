@@ -6,7 +6,6 @@ authors = ["puffio <<>>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-bidict = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -3,6 +3,7 @@ from math import floor, ceil
 from shortsocket import Array
 from timer import Stopwatch
 from functools import lru_cache
+from tiles import tile_names
 
 
 class User:
@@ -25,6 +26,7 @@ class User:
         self.input_buffer = (set(), set(), 0, 0)
         
         self.remembered_tilemap = {}
+        self.remembered_selected = 0
         self.max_ratio = 3
         self.veiw_height = 7
         self.veiw_width = self.max_ratio * self.veiw_height
@@ -119,6 +121,12 @@ class User:
                 player_index = i
         
         entities = entities.values()
+
+        extra_data = [player_index]
+        if self.player.selected != self.remembered_selected:
+            extra_data.append(self.player.selected)
+            self.remembered_selected = self.player.selected
+        
         return Array([
             Array([tile[0][0] for tile in send_tiles], dtype="int32"),
             Array([tile[0][1] for tile in send_tiles], dtype="int32"),
@@ -126,7 +134,7 @@ class User:
             Array([entity[0] for entity in entities], dtype="float32"),
             Array([entity[1] for entity in entities], dtype="float32"),
             Array([entity[2] for entity in entities], dtype="int8"),
-            Array([player_index], dtype="int8")
+            Array(extra_data, dtype="int8")
         ])
 
     def proccess_input(self):
@@ -147,7 +155,7 @@ class User:
         amounts = [self.player.inventory[item] for item in items]
         return Array([
             Array([
-                Array([ord(char) for char in item], dtype="int8")
+                tile_names.inverse[item].TYPE
                 for item in items
             ]),
             Array(amounts, dtype="int8")
