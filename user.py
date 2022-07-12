@@ -157,7 +157,7 @@ class User:
             Array([
                 tile_names.inverse[item].TYPE
                 for item in items
-            ]),
+            ], dtype="int8"),
             Array(amounts, dtype="int8")
         ])
 
