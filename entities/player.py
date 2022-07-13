@@ -80,6 +80,13 @@ class Player(Physics):
         if 3 in mouse_buttons and self.can_break(mouse_x, mouse_y):
             self.break_(mouse_x, mouse_y)
 
+        self.selected += self.user.scroll
+        self.user.scroll = 0
+        if len(tile_order) <= self.selected:
+            self.selected = 1
+        elif self.selected <= 0:
+            self.selected = len(tile_order) - 1
+
     def can_place(self, x, y):
         can_reach = self.can_reach(x, y)
         creative = self.mode in ["creative"]
@@ -113,10 +120,6 @@ class Player(Physics):
 
     def selected_item(self):
         if self.inventory:
-            if len(tile_order) <= self.selected:
-                self.selected = 1
-            elif self.selected <= 0:
-                self.selected = len(tile_order) - 1
             item = tile_names[tile_order[self.selected]]
             return item if item in self.inventory else None
         return None

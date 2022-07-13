@@ -34,6 +34,7 @@ async def serve(websocket):
         mouse_buttons = set()
         mouse_x = 0
         mouse_y = 0
+        mouse_wheel = 0
         async for message in websocket:
             if isinstance(message, str):
                 message = message.encode("UTF-8")
@@ -58,10 +59,13 @@ async def serve(websocket):
                         if n <= msg:
                             msg -= n
                             mouse_buttons.add(i + 1)
+                elif msg_type == ord("W"): # mouse Wheel
+                    mouse_wheel, = struct.unpack("f", message)
             for i in range(5):
                 client.client_frame(
-                    keys, mouse_buttons, mouse_x, mouse_y
+                    keys, mouse_buttons, mouse_x, mouse_y, mouse_wheel
                 )
+                mouse_wheel = 0
                 response = client.render_frame()
                 if response:
                     packet = create_packet(
