@@ -1,6 +1,6 @@
 from entities.physics import Physics
 from math import sqrt
-from tiles import tile_names
+from tiles import tile_names, tile_order
 from timer import Cooldown
 
 
@@ -113,7 +113,12 @@ class Player(Physics):
 
     def selected_item(self):
         if self.inventory:
-            return sorted(self.inventory)[0]
+            if len(tile_order) <= self.selected:
+                self.selected = 1
+            elif self.selected <= 0:
+                self.selected = len(tile_order) - 1
+            item = tile_names[tile_order[self.selected]]
+            return item if item in self.inventory else None
         return None
 
     def place(self, x, y, item):

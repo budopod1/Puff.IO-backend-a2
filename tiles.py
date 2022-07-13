@@ -34,7 +34,8 @@ class Wood(Tile):
     TYPE = 2
 
 
+tile_order = [Tile, Grass, Wood, Leaves, Stone, Flowers]
 tile_names = bidict({
     tile: tile.__name__.lower()
-    for tile in [Tile, Flowers, Grass, Leaves, Stone, Wood]
+    for tile in tile_order
 })
