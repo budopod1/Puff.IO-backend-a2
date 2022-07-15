@@ -1,15 +1,15 @@
 import random
 from wave import Wave
-from tiles import Grass, Wood, Leaves, Stone, Flowers
+from tiles import Grass, Wood, Leaves, Stone, Flowers, Trader1
 from math import ceil
 
 
 class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
-    def __init__(self, tilemap, get_tile, seed=0):
+    def __init__(self, tilemap, server, seed=0):
         self.seed = seed
         random.seed(seed)
         self.tilemap = tilemap
-        self.get_tile = get_tile
+        self.server = server
         
         self.grass_wave = Wave(100, 15, 100, 0)
 
@@ -18,6 +18,9 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
         self.tree_wave = Wave(100, 1, 100, 0.1)
 
         self.flower_wave = Wave(100, 10, 100, -0.5)
+
+    def start(self):
+        self.tilemap[(0, self.server.get_highest(0))] = Trader1()
 
     def generate(self, pos):
         x, y = pos
@@ -32,7 +35,8 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
                 block = Stone()
             else:
                 block = Grass()
-        if ceil(grass_height - y) == 0 and isinstance(self.get_tile((x, y - 1)), Grass):
+        if ceil(grass_height - y) == 0 and\
+                isinstance(self.tilemap[(x, y - 1)], Grass):
             if random.random() < tree_prob:
                 block = Wood()
                 for o in range(random.randint(3, 7)):

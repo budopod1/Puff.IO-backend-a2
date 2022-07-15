@@ -28,13 +28,18 @@ class Stone(Tile):
     TYPE = 4
 
 
+class Trader1(Tile):
+    BREAK_COOLDOWN = 5
+    TYPE = 6
+
+
 class Wood(Tile):
     COLLISION = False
     BREAK_COOLDOWN = 0.5
     TYPE = 2
 
 
-tile_order = [Tile, Grass, Wood, Leaves, Stone, Flowers]
+tile_order = [Tile, Grass, Wood, Leaves, Stone, Flowers, Trader1]
 tile_names = bidict({
     tile: tile.__name__.lower()
     for tile in tile_order

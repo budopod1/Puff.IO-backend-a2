@@ -4,6 +4,7 @@ from shortsocket import Array
 from timer import Stopwatch
 from functools import lru_cache
 from tiles import tile_names
+from random import randint
 
 
 class User:
@@ -54,8 +55,9 @@ class User:
         if server in self.user_positions:
             self.player.x, self.player.y = self.user_positions[server]
         else:
-            self.player.x = 0
-            self.player.y = server.get_highest(0) + 0.01
+            x = randint(-10, 10)
+            self.player.x = x
+            self.player.y = server.get_highest(x) + 0.01
         # Make player store position over locations
         server.entities.append(self.player)
         self.server = server
