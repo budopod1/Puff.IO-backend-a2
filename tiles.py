@@ -1,10 +1,26 @@
 from bidict import bidict
 
 
+# Tiles are ordered as such:
+# * First default Tile (TYPE=0) class
+# * Then tiles with <0 TYPE are ordered alphabetically
+# * Then tiles with >0 TYPE are ordered alphabetically
+
 class Tile:
     COLLISION = True
     BREAK_COOLDOWN = 0
+    INTERACTABLE = False
     TYPE = 0
+    PLACEABLE = True
+
+    def interact(self, player):
+        name = type(self).__name__
+        raise AttributeError(f"Tile {name} cannot be interacted with")
+
+
+class Empty(Tile):
+    TYPE = -1
+    PLACEABLE = False
 
 
 class Flowers(Tile):
@@ -29,8 +45,13 @@ class Stone(Tile):
 
 
 class Trader1(Tile):
+    COLLISION = False
     BREAK_COOLDOWN = 5
+    INTERACTABLE = True
     TYPE = 6
+
+    def interact(self, player):
+        player.user.gui = 2
 
 
 class Wood(Tile):
@@ -39,8 +60,11 @@ class Wood(Tile):
     TYPE = 2
 
 
-tile_order = [Tile, Grass, Wood, Leaves, Stone, Flowers, Trader1]
+tiles = [
+    Tile, Grass, Wood, Leaves, Stone, Flowers, Trader1
+]
+tile_order = {tile.TYPE: tile for tile in tiles}
 tile_names = bidict({
     tile: tile.__name__.lower()
-    for tile in tile_order
+    for tile in tiles
 })

@@ -36,7 +36,7 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
             else:
                 block = Grass()
         if ceil(grass_height - y) == 0 and\
-                isinstance(self.tilemap[(x, y - 1)], Grass):
+                isinstance(self.server.get_tile((x, y - 1)), Grass):
             if random.random() < tree_prob:
                 block = Wood()
                 for o in range(random.randint(3, 7)):

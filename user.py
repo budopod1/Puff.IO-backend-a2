@@ -5,6 +5,9 @@ from timer import Stopwatch
 from functools import lru_cache
 from tiles import tile_names
 from random import randint
+from tiles import Tile, Empty
+from trader import all_trades
+from utils import pad_list
 
 
 class User:
@@ -55,7 +58,7 @@ class User:
         if server in self.user_positions:
             self.player.x, self.player.y = self.user_positions[server]
         else:
-            x = randint(-10, 10)
+            x = randint(-10, 10) # TODO: Use better randomization
             self.player.x = x
             self.player.y = server.get_highest(x) + 0.01
         # Make player store position over locations
@@ -70,7 +73,8 @@ class User:
             return Array([
                 Array([self.gui], dtype="int8"),
                 *{
-                    1: self.inventory_gui
+                    1: self.inventory_gui,
+                    2: self.trader1_gui
                 }[self.gui]()
             ])
 
@@ -143,6 +147,7 @@ class User:
         ])
 
     def proccess_input(self):
+        # TODO: Fix input system: it's overly complex, and just down is unreliable
         keys, mouse_buttons, mouse_x, mouse_y, mouse_wheel = self.input_buffer
         self.input_proccessed = True
         self.keys_just_down = keys - self.keys_down
@@ -167,16 +172,54 @@ class User:
         self.input_proccessed = False
 
     def inventory_gui(self):
-        items = sorted(self.player.inventory)
+        items = sorted(self.player.inventory) # TODO: make it use the right ordering
         amounts = [self.player.inventory[item] for item in items]
+        return self.make_gui(
+            [
+                tile_names.inverse[item]
+                for item in items
+            ],
+            amounts,
+            8, 4
+        )
+
+    def trader1_gui(self):
+        trades = all_trades[1]
+        return self.make_gui(
+            *zip(*[
+                item
+                for trade in [
+                    [
+                        *pad_list(take, 2, (Empty(), 1)),
+                        (Empty(), 1), # TODO: change to Arrow
+                        give,
+                        *([(Empty(), 1)] if i % 2 == 0 else []) # Unreadable, I know: adds a extra empty space on even numbered trades to account for the gap
+                    ]
+                    for i, (take, give) in enumerate(trades)
+                ]
+                for item in trade
+            ]), 9, 5, Empty
+        )
+
+    def make_gui(self, items, amounts, width, height, otherwise=Tile, slots=None):
+        items = list(items[::-1])
+        amounts = list(amounts[::-1])
         return Array([
             Array([
-                tile_names.inverse[item].TYPE
-                for item in items
+                (items.pop().TYPE if items else otherwise.TYPE)
+                if slots is None or (x, y) in slots else 
+                otherwise.TYPE
+                for x in range(width)
+                for y in range(height)
             ], dtype="int8"),
-            Array(amounts, dtype="int8")
+            Array([
+                (amounts.pop() if amounts else 1)
+                if slots is None or (x, y) in slots else
+                1
+                for x in range(width)
+                for y in range(height)
+            ], dtype="int8")
         ])
 
     def state_frame(self):
-        # print(self.timer.time())
         self.player.enabled = self.timer.time() < 10

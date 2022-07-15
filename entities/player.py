@@ -46,7 +46,8 @@ class Player(Physics):
         if 69 in self.user.keys_just_down:
             if self.user.gui in [0, 1]:
                 self.user.gui = 1 - self.user.gui
-            return
+        elif 27 in self.user.keys_just_down:
+            self.user.gui = 0
 
         time_delta = self.state.timer.time_delta
 
@@ -73,9 +74,14 @@ class Player(Physics):
         mouse_x = round(self.user.mouse_x)
         mouse_y = round(self.user.mouse_y)
         mouse_buttons = self.user.mouse_buttons
+        mouse_buttons_just_down = self.user.mouse_buttons_just_down
         
-        if 1 in mouse_buttons and self.can_place(mouse_x, mouse_y):
-            self.place(mouse_x, mouse_y, self.selected_item())
+        if 1 in mouse_buttons:
+            if self.can_place(mouse_x, mouse_y):
+                self.place(mouse_x, mouse_y, self.selected_item())
+        if 1 in mouse_buttons_just_down and\
+                self.can_interact(mouse_x, mouse_y):
+            self.interact(mouse_x, mouse_y)
 
         if 3 in mouse_buttons and self.can_break(mouse_x, mouse_y):
             self.break_(mouse_x, mouse_y)
@@ -86,6 +92,16 @@ class Player(Physics):
             self.selected = 1
         elif self.selected <= 0:
             self.selected = len(tile_order) - 1
+
+    def can_interact(self, x, y):
+        tile = self.server.get_tile((x, y))
+        if tile:
+            return tile.INTERACTABLE
+
+    def interact(self, x, y):
+        tile = self.server.get_tile((x, y))
+        if tile:
+            tile.interact(self)
 
     def can_place(self, x, y):
         can_reach = self.can_reach(x, y)
