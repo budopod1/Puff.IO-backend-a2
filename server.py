@@ -16,8 +16,10 @@ class Server:
 
     def get_highest(self, x):
         y = -10
-        while self.get_tile((x, y)):
+        tile = self.get_tile((x, y))
+        while tile and tile.COLLISION:
             y += 1
+            tile = self.get_tile((x, y))
         return y
 
     def set_tile(self, pos, tile):
