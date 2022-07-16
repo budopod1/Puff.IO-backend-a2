@@ -24,7 +24,8 @@ def create_status(data):
 
 
 def create_packet(data, response):
-    return (b"R" if response else b"N") + shortsocket.encode(data)
+    msg_type = (b"R" if response else b"N")
+    return msg_type + shortsocket.encode(data)
 
 
 async def serve(websocket):

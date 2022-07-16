@@ -3,9 +3,8 @@ from math import floor, ceil
 from shortsocket import Array
 from timer import Stopwatch
 from functools import lru_cache
-from tiles import tile_names
 from random import randint
-from tiles import Tile, Empty
+from tiles import Tile, Empty, Arrow, tile_names, tile_order
 from trader import all_trades
 from utils import pad_list
 
@@ -172,7 +171,10 @@ class User:
         self.input_proccessed = False
 
     def inventory_gui(self):
-        items = sorted(self.player.inventory) # TODO: make it use the right ordering
+        items = sorted(
+            self.player.inventory,
+            key=lambda k: tile_order.inverse[tile_names.inverse[k]]
+        )
         amounts = [self.player.inventory[item] for item in items]
         return self.make_gui(
             [
@@ -191,7 +193,7 @@ class User:
                 for trade in [
                     [
                         *pad_list(take, 2, (Empty(), 1)),
-                        (Empty(), 1), # TODO: change to Arrow
+                        (Arrow(), 1),
                         give,
                         *([(Empty(), 1)] if i % 2 == 0 else []) # Unreadable, I know: adds a extra empty space on even numbered trades to account for the gap
                     ]

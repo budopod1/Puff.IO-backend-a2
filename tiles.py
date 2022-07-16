@@ -23,6 +23,11 @@ class Empty(Tile):
     PLACEABLE = False
 
 
+class Arrow(Tile):
+    TYPE = -2
+    PLACEABLE = False
+
+
 class Flowers(Tile):
     COLLISION = False
     BREAK_COOLDOWN = 0
@@ -63,7 +68,7 @@ class Wood(Tile):
 tiles = [
     Tile, Grass, Wood, Leaves, Stone, Flowers, Trader1
 ]
-tile_order = {tile.TYPE: tile for tile in tiles}
+tile_order = bidict({tile.TYPE: tile for tile in tiles})
 tile_names = bidict({
     tile: tile.__name__.lower()
     for tile in tiles
