@@ -4,9 +4,7 @@ from shortsocket import Array
 from timer import Stopwatch
 from functools import lru_cache
 from random import randint
-from tiles import Tile, Empty, Arrow, tile_names, tile_order
-from trader import all_trades
-from utils import pad_list
+from gui import guis
 
 
 class User:
@@ -71,10 +69,7 @@ class User:
         if self.gui:
             return Array([
                 Array([self.gui], dtype="int8"),
-                *{
-                    1: self.inventory_gui,
-                    2: self.trader1_gui
-                }[self.gui]()
+                *guis[self.gui](self.player)
             ])
 
         # self.check_entity_ids()
@@ -136,12 +131,30 @@ class User:
             self.remembered_selected = self.player.selected
         
         return Array([
-            Array([tile[0][0] for tile in send_tiles], dtype="int32"),
-            Array([tile[0][1] for tile in send_tiles], dtype="int32"),
-            Array([tile[1] for tile in send_tiles], dtype="int8"),
-            Array([entity[0] for entity in entities], dtype="float32"),
-            Array([entity[1] for entity in entities], dtype="float32"),
-            Array([entity[2] for entity in entities], dtype="int8"),
+            Array(
+                [tile[0][0] for tile in send_tiles],
+                dtype="int32"
+            ),
+            Array(
+                [tile[0][1] for tile in send_tiles],
+                dtype="int32"
+            ),
+            Array(
+                [tile[1] for tile in send_tiles],
+                dtype="int8"
+            ),
+            Array(
+                [entity[0] for entity in entities], 
+                dtype="float32"
+            ),
+            Array(
+                [entity[1] for entity in entities],
+                dtype="float32"
+            ),
+            Array(
+                [entity[2] for entity in entities],
+                dtype="int8"
+            ),
             Array(extra_data, dtype="int8")
         ])
 
@@ -169,59 +182,6 @@ class User:
             mouse_wheel + (omouse_wheel if not self.input_proccessed else 0)
         )
         self.input_proccessed = False
-
-    def inventory_gui(self):
-        items = sorted(
-            self.player.inventory,
-            key=lambda k: tile_order.inverse[tile_names.inverse[k]]
-        )
-        amounts = [self.player.inventory[item] for item in items]
-        return self.make_gui(
-            [
-                tile_names.inverse[item]
-                for item in items
-            ],
-            amounts,
-            8, 4
-        )
-
-    def trader1_gui(self):
-        trades = all_trades[1]
-        return self.make_gui(
-            *zip(*[
-                item
-                for trade in [
-                    [
-                        *pad_list(take, 2, (Empty(), 1)),
-                        (Arrow(), 1),
-                        give,
-                        *([(Empty(), 1)] if i % 2 == 0 else []) # Unreadable, I know: adds a extra empty space on even numbered trades to account for the gap
-                    ]
-                    for i, (take, give) in enumerate(trades)
-                ]
-                for item in trade
-            ]), 9, 5, Empty
-        )
-
-    def make_gui(self, items, amounts, width, height, otherwise=Tile, slots=None):
-        items = list(items[::-1])
-        amounts = list(amounts[::-1])
-        return Array([
-            Array([
-                (items.pop().TYPE if items else otherwise.TYPE)
-                if slots is None or (x, y) in slots else 
-                otherwise.TYPE
-                for x in range(width)
-                for y in range(height)
-            ], dtype="int8"),
-            Array([
-                (amounts.pop() if amounts else 1)
-                if slots is None or (x, y) in slots else
-                1
-                for x in range(width)
-                for y in range(height)
-            ], dtype="int8")
-        ])
-
+    
     def state_frame(self):
         self.player.enabled = self.timer.time() < 10
