@@ -46,7 +46,7 @@ class User:
         return new_id
 
     def change_server(self, server):
-        if self.server:
+        if self.server: # Store position in old server
             self.user_positions[self.server] = (
                 self.player.x, 
                 self.player.y
@@ -55,10 +55,9 @@ class User:
         if server in self.user_positions:
             self.player.x, self.player.y = self.user_positions[server]
         else:
-            x = randint(-10, 10) # TODO: Use better randomization
+            x = randint(-10, 10)
             self.player.x = x
             self.player.y = server.get_highest(x) + 0.01
-        # Make player store position over locations
         server.entities.append(self.player)
         self.server = server
         self.remembered_tilemap = {}
@@ -67,10 +66,7 @@ class User:
         self.timer.start()
         
         if self.gui:
-            return Array([
-                Array([self.gui], dtype="int8"),
-                *guis[self.gui](self.player)
-            ])
+            return guis[self.gui](self.player)
 
         # self.check_entity_ids()
         entities = {

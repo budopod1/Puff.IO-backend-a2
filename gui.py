@@ -20,6 +20,7 @@ def inventory_gui(player):
     )
     amounts = [player.inventory[item] for item in items]
     return make_gui(
+        1,
         [
             tile_names.inverse[item]
             for item in items
@@ -31,6 +32,7 @@ def inventory_gui(player):
 def trader1_gui(player):
     trades = all_trades[1]
     return make_gui(
+        2,
         *zip(*[
             item
             for trade in [
@@ -46,11 +48,12 @@ def trader1_gui(player):
         ]), 9, 5, Empty
     )
 
-def make_gui(items, amounts, width, height, otherwise=Tile,
+def make_gui(gui, items, amounts, width, height, otherwise=Tile,
              slots=None):
     items = list(items[::-1])
     amounts = list(amounts[::-1])
     return Array([
+        Array([gui], dtype="int8"),
         Array([
             (items.pop().TYPE if items else otherwise.TYPE)
             if slots is None or (x, y) in slots else 
