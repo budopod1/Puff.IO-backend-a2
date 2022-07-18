@@ -21,6 +21,11 @@ class Player(Physics):
             (-0.2, 1),
         ]
 
+        self.mouse_x = 0
+        self.mouse_y = 0
+        self.keys = set()
+        self.keys_just_down = set()
+
         self.reach = 4
 
         self.inventory = {}

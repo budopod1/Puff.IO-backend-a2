@@ -16,18 +16,21 @@ class User:
         self.username = username
 
         self.keys_down = set()
+        self._keys_just_down = set()
         self.keys_just_down = set()
         
         self.mouse_buttons = set()
+        self._mouse_buttons_just_down = set()
         self.mouse_buttons_just_down = set()
 
+        self._mouse_x = 0
+        self._mouse_y = 0
+        
         self.mouse_x = 0
         self.mouse_y = 0
 
+        self._scroll = set()
         self.scroll = 0
-
-        self.input_buffer = (set(), set(), 0, 0, 0)
-        self.input_proccessed = True
         
         self.remembered_tilemap = {}
         self.remembered_selected = 0
@@ -155,29 +158,30 @@ class User:
         ])
 
     def proccess_input(self):
-        # TODO: Fix input system: it's overly complex, and just down is unreliable
-        keys, mouse_buttons, mouse_x, mouse_y, mouse_wheel = self.input_buffer
-        self.input_proccessed = True
-        self.keys_just_down = keys - self.keys_down
-        self.keys_down = keys
-        self.mouse_buttons_just_down = mouse_buttons - self.mouse_buttons
-        self.mouse_buttons = mouse_buttons
-        self.mouse_x = self.player.x + mouse_x
-        self.mouse_y = self.player.y + mouse_y
-        if mouse_wheel > 0:
-            self.scroll = 1
-        elif mouse_wheel < 0:
-            self.scroll = -1
-        self.input_buffer = (keys, mouse_buttons, mouse_x, mouse_y, 0)
+        self.scroll = sum([1 if input > 0 else -1 for input in self._scroll])
+        self._scroll = set()
+        
+        self.keys_just_down = self._keys_just_down
+        self._keys_just_down = set()
+
+        self.mouse_buttons_just_down = self._mouse_buttons_just_down
+        self._mouse_buttons_just_down = set()
+        
+        self.mouse_x = self.player.x + self._mouse_x
+        self.mouse_y = self.player.y + self._mouse_y
     
     def client_frame(self, keys, mouse_buttons, mouse_x, mouse_y, mouse_wheel):
-        # self.timer.tick()
-        okeys, omouse_buttons, omouse_x, omouse_y, omouse_wheel = self.input_buffer
-        self.input_buffer = (
-            keys, mouse_buttons, mouse_x, mouse_y, 
-            mouse_wheel + (omouse_wheel if not self.input_proccessed else 0)
-        )
-        self.input_proccessed = False
+        self._mouse_x = mouse_x
+        self._mouse_y = mouse_y
+        
+        self._keys_just_down.update(keys - self.keys_down)
+        self.keys_down = keys
+        
+        self._mouse_buttons_just_down.update(mouse_buttons - self.mouse_buttons)
+        self.mouse_buttons = mouse_buttons
+        
+        if mouse_wheel:
+            self._scroll.put(mouse_wheel)
     
     def state_frame(self):
         self.player.enabled = self.timer.time() < 10
