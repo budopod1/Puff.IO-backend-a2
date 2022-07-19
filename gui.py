@@ -1,6 +1,6 @@
 from tiles import Leaves, Flowers, Grass, Trader1, Stone, Wood
 from utils import pad_list
-from tiles import Tile, Empty, Arrow, tile_names, tile_order
+from tiles import Tile, Empty, Arrow, tile_names
 from shortsocket import Array
 
 
@@ -14,10 +14,7 @@ all_trades = {
 
 
 def inventory_gui(player):
-    items = sorted(
-        player.inventory,
-        key=lambda k: tile_order.inverse[tile_names.inverse[k]]
-    )
+    items = player.sorted_inventory()
     amounts = [player.inventory[item] for item in items]
     return make_gui(
         1,

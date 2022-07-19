@@ -29,6 +29,8 @@ class User:
         self.mouse_x = 0
         self.mouse_y = 0
 
+        self.cell = 0
+
         self._scroll = set()
         self.scroll = 0
         
@@ -170,9 +172,11 @@ class User:
         self.mouse_x = self.player.x + self._mouse_x
         self.mouse_y = self.player.y + self._mouse_y
     
-    def client_frame(self, keys, mouse_buttons, mouse_x, mouse_y, mouse_wheel):
+    def client_frame(self, keys, mouse_buttons, mouse_x, mouse_y, cell, mouse_wheel):
         self._mouse_x = mouse_x
         self._mouse_y = mouse_y
+
+        self.cell = cell
         
         self._keys_just_down.update(keys - self.keys_down)
         self.keys_down = keys

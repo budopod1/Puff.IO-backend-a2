@@ -31,7 +31,7 @@ class Player(Physics):
         self.inventory = {}
         self.selected = 1
 
-        # I stole the name from minceraft, so what?
+        # I stole the names from minceraft, so what?
         self.mode = "survival"
 
         self.ground_pounding = False
@@ -53,6 +53,12 @@ class Player(Physics):
                 self.user.gui = 1 - self.user.gui
         elif 27 in self.user.keys_just_down:
             self.user.gui = 0
+            
+        mouse_buttons = self.user.mouse_buttons
+        mouse_buttons_just_down = self.user.mouse_buttons_just_down
+        
+        if self.user.gui:
+            return
 
         time_delta = self.state.timer.time_delta
 
@@ -78,8 +84,6 @@ class Player(Physics):
         
         mouse_x = round(self.user.mouse_x)
         mouse_y = round(self.user.mouse_y)
-        mouse_buttons = self.user.mouse_buttons
-        mouse_buttons_just_down = self.user.mouse_buttons_just_down
         
         if 1 in mouse_buttons:
             if self.can_place(mouse_x, mouse_y):
@@ -120,6 +124,12 @@ class Player(Physics):
         creative = self.mode in ["creative"]
         break_cooled_down = self.break_cooldown.expired() or creative
         return self.server.collides((x, y)) and can_reach and break_cooled_down
+
+    def sorted_inventory(self):
+        return sorted(
+            self.inventory,
+            key=lambda k: tile_order.inverse[tile_names.inverse[k]]
+        )
 
     def collect_item(self, item):
         self.inventory[item] = self.inventory.get(item, 0) + 1

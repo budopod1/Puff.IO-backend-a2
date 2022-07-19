@@ -35,6 +35,7 @@ async def serve(websocket):
         mouse_buttons = set()
         mouse_x = 0
         mouse_y = 0
+        cell = 0
         mouse_wheel = 0
         async for message in websocket:
             if isinstance(message, str):
@@ -62,9 +63,12 @@ async def serve(websocket):
                             mouse_buttons.add(i + 1)
                 elif msg_type == ord("W"): # mouse Wheel
                     mouse_wheel, = struct.unpack("f", message)
+                elif msg_type == ord("C"): # selected Cell
+                    cell = message[0] - 1
                     
                 client.client_frame(
-                    keys, mouse_buttons, mouse_x, mouse_y, mouse_wheel
+                    keys, mouse_buttons, mouse_x, mouse_y,
+                    cell, mouse_wheel
                 )
                 mouse_wheel = 0
             for i in range(5):
