@@ -50,8 +50,10 @@ class Player(Physics):
         up_and_down = press_ground_pound and press_jump
 
         if 69 in self.user.keys_just_down:
-            if self.user.gui in [0, 1]:
-                self.user.gui = 1 - self.user.gui
+            if self.user.gui == 0:
+                self.user.gui = 1
+            else:
+                self.user.gui = 0
         elif 27 in self.user.keys_just_down:
             self.user.gui = 0
             

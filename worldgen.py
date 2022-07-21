@@ -32,8 +32,8 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
         block = None
         if y < grass_height:
             if y < stone_height:
-                if random.random() < 0.2:
-                    block = IronOre() # huh?
+                if random.random() < 0.05:
+                    block = IronOre()
                 else:
                     block = Stone()
             else:
