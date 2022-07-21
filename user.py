@@ -31,7 +31,7 @@ class User:
 
         self.cell = 0
 
-        self._scroll = set()
+        self._scroll = []
         self.scroll = 0
         
         self.remembered_tilemap = {}
@@ -161,7 +161,7 @@ class User:
 
     def proccess_input(self):
         self.scroll = sum([1 if input > 0 else -1 for input in self._scroll])
-        self._scroll = set()
+        self._scroll = []
         
         self.keys_just_down = self._keys_just_down
         self._keys_just_down = set()
@@ -185,7 +185,7 @@ class User:
         self.mouse_buttons = mouse_buttons
         
         if mouse_wheel:
-            self._scroll.put(mouse_wheel)
+            self._scroll.append(mouse_wheel)
     
     def state_frame(self):
         self.player.enabled = self.timer.time() < 10

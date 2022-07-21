@@ -1,6 +1,6 @@
 import random
 from wave import Wave
-from tiles import Grass, Wood, Leaves, Stone, Flowers, Trader1
+from tiles import Grass, Wood, Leaves, Stone, Flowers, Trader1, IronOre
 from math import ceil
 
 
@@ -32,7 +32,10 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
         block = None
         if y < grass_height:
             if y < stone_height:
-                block = Stone()
+                if random.random() < 0.2:
+                    block = IronOre() # huh?
+                else:
+                    block = Stone()
             else:
                 block = Grass()
         if ceil(grass_height - y) == 0 and\

@@ -17,6 +17,9 @@ class Tile:
         name = type(self).__name__
         raise AttributeError(f"Tile {name} cannot be interacted with")
 
+    def turn_to(self):
+        return type(self)
+
 
 class Empty(Tile):
     TYPE = -1
@@ -28,6 +31,11 @@ class Arrow(Tile):
     PLACEABLE = False
 
 
+class Iron(Tile):
+    TYPE = -3
+    PLACEABLE = -4
+
+
 class Flowers(Tile):
     COLLISION = False
     BREAK_COOLDOWN = 0
@@ -37,6 +45,14 @@ class Flowers(Tile):
 class Grass(Tile):
     BREAK_COOLDOWN = 0.2
     TYPE = 1
+
+
+class IronOre(Tile):
+    BREAK_COOLDOWN = 4
+    TYPE = 7
+
+    def turn_to(self):
+        return Iron
 
 
 class Leaves(Tile):
@@ -66,7 +82,7 @@ class Wood(Tile):
 
 
 tiles = [
-    Tile, Grass, Wood, Leaves, Stone, Flowers, Trader1
+    Tile, Arrow, Iron, IronOre, Grass, Wood, Leaves, Stone, Flowers, Trader1
 ]
 tile_order = bidict({tile.TYPE: tile for tile in tiles})
 tile_names = bidict({

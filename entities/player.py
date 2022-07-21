@@ -97,7 +97,7 @@ class Player(Physics):
 
         self.selected += self.user.scroll
         self.user.scroll = 0
-        if len(tile_order) <= self.selected:
+        if self.selected >= max(tile_order):
             self.selected = 1
         elif self.selected <= 0:
             self.selected = len(tile_order) - 1
@@ -137,12 +137,11 @@ class Player(Physics):
     def break_(self, x, y):
         if self.server.get_tile((x, y)) is not None:
             tile = self.server.get_tile((x, y))
-            tile_name = tile_names[type(tile)]
             self.server.set_tile((x, y), None)
             self.break_cooldown.start(tile.BREAK_COOLDOWN)
             survival = self.mode in ["survival"]
             if survival:
-                self.collect_item(tile_name)
+                self.collect_item(tile_names[tile.turn_to()])
 
     def can_reach(self, x, y):
         distance = sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
