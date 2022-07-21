@@ -31,9 +31,14 @@ class Arrow(Tile):
     PLACEABLE = False
 
 
-class Iron(Tile):
+class Drill1(Tile):
     TYPE = -3
-    PLACEABLE = -4
+    PLACEABLE = False
+
+
+class Iron(Tile):
+    TYPE = -4
+    PLACEABLE = False
 
 
 class Flowers(Tile):
@@ -82,7 +87,8 @@ class Wood(Tile):
 
 
 tiles = [
-    Tile, Arrow, Iron, IronOre, Grass, Wood, Leaves, Stone, Flowers, Trader1
+    Tile, Arrow, Drill1, Iron, IronOre, Grass, Wood, Leaves,
+    Stone, Flowers, Trader1
 ]
 tile_order = bidict({tile.TYPE: tile for tile in tiles})
 tile_names = bidict({

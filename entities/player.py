@@ -2,6 +2,7 @@ from entities.physics import Physics
 from math import sqrt
 from tiles import tile_names, tile_order
 from timer import Cooldown
+from gui import trade_guis, get_trade
 
 
 class Player(Physics):
@@ -56,6 +57,17 @@ class Player(Physics):
             
         mouse_buttons = self.user.mouse_buttons
         mouse_buttons_just_down = self.user.mouse_buttons_just_down
+
+        if (self.user.gui in trade_guis and self.user.cell >= 0 and
+                1 in mouse_buttons_just_down):
+            cell = self.user.cell
+            i = 0
+            while cell > 3:
+                cell -= 4
+                if i % 2 == 0:
+                    cell -= 1
+                i += 1
+            self.try_trade(get_trade(self.user.gui, i))
         
         if self.user.gui:
             return
@@ -102,6 +114,20 @@ class Player(Physics):
         elif self.selected <= 0:
             self.selected = len(tile_order) - 1
 
+    def try_trade(self, trade):
+        take, give = trade
+        for item, amount in take:
+            name = tile_names[item]
+            if not self.has_n_items(name, amount):
+                return False
+        for item, amount in take:
+            name = tile_names[item]
+            self.remove_n_items(name, amount)
+        item, amount = give
+        name = tile_names[item]
+        self.add_n_items(name, amount)
+        return True
+
     def can_interact(self, x, y):
         tile = self.server.get_tile((x, y))
         if tile:
@@ -131,8 +157,25 @@ class Player(Physics):
             key=lambda k: tile_order.inverse[tile_names.inverse[k]]
         )
 
+    def remove_n_items(self, item, n):
+        assert self.has_n_items(item, n)
+        curr_num = self.inventory[item]
+        if curr_num - n > 0:
+            self.inventory[item] = curr_num - n
+        else:
+            del self.inventory[item]
+
+    def has_n_items(self, item, n):
+        return self.inventory.get(item, 0) >= n
+
+    def add_n_items(self, item, n):
+        if item not in self.inventory:
+            self.inventory[item] = n
+        else:
+            self.inventory[item] += n
+
     def collect_item(self, item):
-        self.inventory[item] = self.inventory.get(item, 0) + 1
+        self.add_n_items(item, 1)
     
     def break_(self, x, y):
         if self.server.get_tile((x, y)) is not None:

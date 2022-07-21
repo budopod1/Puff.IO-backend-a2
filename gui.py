@@ -1,16 +1,19 @@
-from tiles import Leaves, Flowers, Grass, Trader1, Stone, Wood
+from tiles import Wood, Iron, Drill1
 from utils import pad_list
 from tiles import Tile, Empty, Arrow, tile_names
 from shortsocket import Array
-
+# TODO: Change gui to container
 
 all_trades = {
     1: [
-        (((Leaves, 1), (Grass, 2)), (Flowers, 1)),
-        (((Trader1, 2),), (Stone, 5)),
-        (((Wood, 5),), (Leaves, 1))
+        (((Wood, 1), (Iron, 1)), (Drill1, 1))
     ]
 }
+trade_guis = [2]
+
+
+def get_trade(gui, num):
+    return all_trades[{2: 1}[gui]][num]
 
 
 def inventory_gui(player):
