@@ -12,6 +12,7 @@ class Tile:
     INTERACTABLE = False
     TYPE = 0
     PLACEABLE = True
+    BREAK_SPEED = 1
 
     def interact(self, player):
         name = type(self).__name__
@@ -34,6 +35,7 @@ class Arrow(Tile):
 class Drill1(Tile):
     TYPE = -3
     PLACEABLE = False
+    BREAK_SPEED = 3
 
 
 class Iron(Tile):

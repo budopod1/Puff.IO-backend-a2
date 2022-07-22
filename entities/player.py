@@ -116,6 +116,12 @@ class Player(Physics):
         elif self.selected <= 0:
             self.selected = len(tile_order) - 1
 
+    def get_break_speed(self):
+        return max([
+            tile_names.inverse[item].BREAK_SPEED
+            for item in self.inventory
+        ], default=1)
+
     def try_trade(self, trade):
         take, give = trade
         for item, amount in take:
@@ -183,7 +189,9 @@ class Player(Physics):
         if self.server.get_tile((x, y)) is not None:
             tile = self.server.get_tile((x, y))
             self.server.set_tile((x, y), None)
-            self.break_cooldown.start(tile.BREAK_COOLDOWN)
+            self.break_cooldown.start(
+                tile.BREAK_COOLDOWN / self.get_break_speed()
+            )
             survival = self.mode in ["survival"]
             if survival:
                 self.collect_item(tile_names[tile.turn_to()])
