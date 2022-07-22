@@ -60,8 +60,8 @@ class Player(Physics):
         mouse_buttons = self.user.mouse_buttons
         mouse_buttons_just_down = self.user.mouse_buttons_just_down
 
-        if (self.user.gui in trade_guis and self.user.cell >= 0 and
-                1 in mouse_buttons_just_down):
+        if (self.user.gui in trade_guis and self.user.cell >= 0
+            and 1 in mouse_buttons_just_down):
             cell = self.user.cell
             i = 0
             while cell > 3:
@@ -69,7 +69,9 @@ class Player(Physics):
                 if i % 2 == 0:
                     cell -= 1
                 i += 1
-            self.try_trade(get_trade(self.user.gui, i))
+            trade = get_trade(self.user.gui, i)
+            if trade is not None:
+                self.try_trade(trade)
         
         if self.user.gui:
             return
@@ -102,9 +104,9 @@ class Player(Physics):
         if 1 in mouse_buttons:
             if self.can_place(mouse_x, mouse_y):
                 self.place(mouse_x, mouse_y, self.selected_item())
-        if 1 in mouse_buttons_just_down and\
-                self.can_interact(mouse_x, mouse_y):
-            self.interact(mouse_x, mouse_y)
+            elif 1 in mouse_buttons_just_down and\
+                    self.can_interact(mouse_x, mouse_y):
+                self.interact(mouse_x, mouse_y)
 
         if 3 in mouse_buttons and self.can_break(mouse_x, mouse_y):
             self.break_(mouse_x, mouse_y)

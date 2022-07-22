@@ -13,7 +13,12 @@ trade_guis = [2]
 
 
 def get_trade(gui, num):
-    return all_trades[{2: 1}[gui]][num]
+    if gui not in trade_guis:
+        return None
+    trades = all_trades[{2: 1}[gui]]
+    if len(trades) <= num:
+        return None
+    return trades[num]
 
 
 def inventory_gui(player):
