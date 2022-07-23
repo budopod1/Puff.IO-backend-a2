@@ -33,13 +33,19 @@ class Arrow(Tile):
 
 
 class Drill1(Tile):
-    TYPE = -3
+    TYPE = -4
     PLACEABLE = False
-    BREAK_SPEED = 3
+    BREAK_SPEED = 2
+
+
+class Drill2(Tile):
+    TYPE = -5
+    PLACEABLE = False
+    BREAK_SPEED = 4
 
 
 class Iron(Tile):
-    TYPE = -4
+    TYPE = -3
     PLACEABLE = False
 
 
