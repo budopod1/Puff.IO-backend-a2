@@ -95,8 +95,8 @@ class Wood(Tile):
 
 
 tiles = [
-    Tile, Arrow, Drill1, Iron, IronOre, Grass, Wood, Leaves,
-    Stone, Flowers, Trader1
+    Tile, Arrow, Drill1, Drill2, Iron, IronOre, Grass, Wood,
+    Leaves, Stone, Flowers, Trader1
 ]
 tile_order = bidict({tile.TYPE: tile for tile in tiles})
 tile_names = bidict({

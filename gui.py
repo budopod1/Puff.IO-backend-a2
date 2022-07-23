@@ -6,7 +6,7 @@ from shortsocket import Array
 
 all_trades = {
     1: [
-        (((Wood, 1), (Stone, 3)), (Drill1, 1)),
+        (((Wood, 3), (Stone, 1)), (Drill1, 1)),
         (((Drill1, 1), (Iron, 1)), (Drill2, 1))
     ]
 }

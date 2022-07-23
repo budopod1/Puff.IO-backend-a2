@@ -71,7 +71,13 @@ class Player(Physics):
                 i += 1
             trade = get_trade(self.user.gui, i)
             if trade is not None:
-                self.try_trade(trade)
+                if self.try_trade(trade):
+                    self.user.gui = 0
+                    # mouse is still in same place as when clicked on trader
+                    # as far as game knows, so if we don't remove the mouse input
+                    # the gui will immediatly reopen
+                    mouse_buttons = set()
+                    mouse_buttons_just_down = set()
         
         if self.user.gui:
             return
