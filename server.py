@@ -26,9 +26,14 @@ class Server:
         self.tilemap[pos] = tile
 
     def tick(self):
+        to_delete = []
         for entity in self.entities:
             if entity.enabled:
                 entity.tick()
+            if entity.to_delete:
+                to_delete.append(entity)
+        for entity in to_delete:
+            self.entities.remove(entity)
 
     def collides(self, pos):
         x, y = pos

@@ -1,16 +1,17 @@
-from entities.physics import Physics
-from math import sqrt
+from entities.mob import Mob
+from math import sqrt, ceil
 from tiles import tile_names, tile_order
 from timer import Cooldown
 from gui import trade_guis, get_trade
 
 
-class Player(Physics):
+class Player(Mob):
     def __init__(self, *args, user=None):
         super().__init__(*args)
         assert user
         self.user = user
 
+        self.health = 10
         self.jump_power = 7
         self.move_power = 5
         self.collider = [
@@ -40,8 +41,15 @@ class Player(Physics):
 
         self.break_cooldown = Cooldown()
 
+    def get_health(self):
+        if self.mode in ["creative"]:
+            return 0
+        else:
+            return ceil(self.health * 2)
+
     def tick(self):
-        super().tick()
+        if not super().tick():
+            return False
 
         self.user.proccess_input()
         

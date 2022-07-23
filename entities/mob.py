@@ -1,7 +1,7 @@
 from entities.entity import Entity
 
 
-class Physics(Entity):
+class Mob(Entity):
     def __init__(self, *args):
         super().__init__(*args)
         self.xv, self.yv = (0, 0) # Velocity
@@ -11,6 +11,7 @@ class Physics(Entity):
         self.collider = [
             (0, -1)
         ]
+        self.health = 1
 
     def would_collide(self, pos):
         x, y = pos
@@ -34,6 +35,10 @@ class Physics(Entity):
 
     def tick(self):
         time_delta = self.state.timer.time_delta
+
+        if self.health <= 0:
+            self.to_delete = True
+            return False
         
         self.grounded = False
 
@@ -56,3 +61,5 @@ class Physics(Entity):
 
         self.xv *= 1 - self.xd * time_delta
         self.yv *= 1 - self.yd * time_delta
+
+        return True

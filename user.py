@@ -36,6 +36,9 @@ class User:
         
         self.remembered_tilemap = {}
         self.remembered_selected = 0
+        self.remembered_health = 0
+        self.remembered_player_index = 0
+        
         self.max_ratio = 3
         self.veiw_height = 7
         self.veiw_width = self.max_ratio * self.veiw_height
@@ -119,17 +122,26 @@ class User:
             if y_min <= y <= y_max
         }
         
+        extra_data = []
+        
         player_index = None
         for i, (entity_id, _) in enumerate(entities.items()):
             if entity_id == id(self.player):
                 player_index = i
+        if self.remembered_player_index != player_index:
+            extra_data.append(player_index)
+            self.remembered_player_index = player_index
         
-        entities = entities.values()
-
-        extra_data = [player_index]
         if self.player.selected != self.remembered_selected:
             extra_data.append(self.player.selected)
             self.remembered_selected = self.player.selected
+        
+        health = self.player.get_health()
+        if health != self.remembered_health:
+            extra_data.append(health)
+            self.remembered_health = health
+        
+        entities = entities.values()
         
         return Array([
             Array(

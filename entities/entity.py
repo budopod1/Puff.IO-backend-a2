@@ -4,6 +4,7 @@ class Entity:
         self.server = server
         self.state = server.state
         self.enabled = True
+        self.to_delete = False
 
     def get_type(self):
         return 0
