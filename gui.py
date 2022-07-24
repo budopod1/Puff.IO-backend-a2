@@ -7,7 +7,7 @@ from shortsocket import Array
 all_trades = {
     1: [
         (((Wood, 3), (Stone, 1)), (Drill1, 1)),
-        (((Drill1, 1), (Iron, 1)), (Drill2, 1))
+        (((Drill1, 1), (Iron, 3)), (Drill2, 1))
     ]
 }
 trade_guis = [2]

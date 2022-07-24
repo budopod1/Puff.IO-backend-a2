@@ -123,23 +123,28 @@ class User:
         }
         
         extra_data = []
+        before = False
+        
+        health = self.player.get_health()
+        if health != self.remembered_health or before:
+            before = True
+            extra_data.insert(0, health)
+            self.remembered_health = health
+        
+        if self.player.selected != self.remembered_selected or before:
+            before = True
+            extra_data.insert(0, self.player.selected)
+            self.remembered_selected = self.player.selected
         
         player_index = None
         for i, (entity_id, _) in enumerate(entities.items()):
             if entity_id == id(self.player):
                 player_index = i
-        if self.remembered_player_index != player_index:
-            extra_data.append(player_index)
+        
+        if self.remembered_player_index != player_index or before:
+            before = True
+            extra_data.insert(0, player_index)
             self.remembered_player_index = player_index
-        
-        if self.player.selected != self.remembered_selected:
-            extra_data.append(self.player.selected)
-            self.remembered_selected = self.player.selected
-        
-        health = self.player.get_health()
-        if health != self.remembered_health:
-            extra_data.append(health)
-            self.remembered_health = health
         
         entities = entities.values()
         

@@ -96,6 +96,8 @@ class Player(Entity):
 
         time_delta = self.state.timer.time_delta
 
+        self.damage(time_delta / 2)
+
         if self.grounded:
             self.ground_pounding = False
 
