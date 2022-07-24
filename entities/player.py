@@ -1,11 +1,11 @@
-from entities.mob import Mob
+from entities.entity import Entity
 from math import sqrt, ceil
 from tiles import tile_names, tile_order
 from timer import Cooldown
 from gui import trade_guis, get_trade
 
 
-class Player(Mob):
+class Player(Entity):
     def __init__(self, *args, user=None):
         super().__init__(*args)
         assert user
@@ -40,6 +40,10 @@ class Player(Mob):
         self.ground_pound_speed = -10
 
         self.break_cooldown = Cooldown()
+
+    def damage(self, amount):
+        if self.mode in ["survival"]:
+            self.health -= amount
 
     def get_health(self):
         if self.mode in ["creative"]:
