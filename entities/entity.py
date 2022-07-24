@@ -15,6 +15,9 @@ class Entity:
         ]
         self.health = 1
 
+    def damage(self, amount):
+        self.health -= amount
+
     def get_type(self):
         return 0
 

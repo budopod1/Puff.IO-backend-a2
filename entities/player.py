@@ -43,7 +43,7 @@ class Player(Entity):
 
     def damage(self, amount):
         if self.mode in ["survival"]:
-            self.health -= amount
+            super().damage(amount)
 
     def get_health(self):
         if self.mode in ["creative"]:
