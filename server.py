@@ -1,4 +1,5 @@
 from worldgen import WorldGen
+from entities.zombie import Zombie
 
 
 class Server:
@@ -8,6 +9,14 @@ class Server:
         self.tilemap = {}
         self.worldgen = WorldGen(self.tilemap, self)
         self.worldgen.start()
+
+        self.spawn(Zombie, 10) # TEMP
+
+    def spawn(self, Entity, x):
+        y = self.get_highest(x)
+        entity = Entity(self, (x, y))
+        self.entities.append(entity)
+        return entity
 
     def get_tile(self, pos):
         if pos not in self.tilemap:
@@ -30,7 +39,7 @@ class Server:
         for entity in self.entities:
             if entity.enabled:
                 entity.tick()
-            if entity.to_delete:
+            if entity.destroyed:
                 to_delete.append(entity)
         for entity in to_delete:
             self.entities.remove(entity)

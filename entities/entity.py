@@ -4,12 +4,13 @@ class Entity:
         self.server = server
         self.state = server.state
         self.enabled = True
-        self.to_delete = False
+        self.destroyed = False
         
         self.xv, self.yv = (0, 0) # Velocity
         self.xg, self.yg = (0, -16) # Gravity
         self.xd, self.yd = (0.02, 0.02) # Drag
         self.grounded = False
+        self.walled = False
         self.collider = [
             (0, -1)
         ]
@@ -45,15 +46,17 @@ class Entity:
         time_delta = self.state.timer.time_delta
 
         if self.health <= 0:
-            self.to_delete = True
+            self.destroyed = True
             return False
         
         self.grounded = False
+        self.walled = False
 
         new_x = self.x + self.xv * time_delta
         if not self.would_collide((new_x, self.y)):
             self.x = new_x
         else:
+            self.walled = True
             self.xv = 0
             
         new_y = self.y + self.yv * time_delta
