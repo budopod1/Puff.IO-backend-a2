@@ -30,7 +30,7 @@ class Zombie(Entity):
             return False
         
         if self.target:
-            if self.target.destroyed:
+            if self.target.destroyed or not self.target.enabled:
                 self.target = None
                 return
 

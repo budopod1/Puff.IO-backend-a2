@@ -3,7 +3,6 @@ from math import floor, ceil
 from shortsocket import Array
 from timer import Stopwatch
 from functools import lru_cache
-from random import randint
 from gui import guis
 
 
@@ -63,9 +62,7 @@ class User:
         if server in self.user_positions:
             self.player.x, self.player.y = self.user_positions[server]
         else:
-            x = randint(-10, 10)
-            self.player.x = x
-            self.player.y = server.get_highest(x) + 0.01
+            self.player.x, self.player.y = server.get_world_spawn()
         server.entities.append(self.player)
         self.server = server
         self.remembered_tilemap = {}

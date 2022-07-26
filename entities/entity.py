@@ -16,6 +16,9 @@ class Entity:
         ]
         self.health = 1
 
+    def destroy(self):
+        self.destroyed = True
+
     def damage(self, amount):
         self.health -= amount
 
@@ -46,7 +49,7 @@ class Entity:
         time_delta = self.state.timer.time_delta
 
         if self.health <= 0:
-            self.destroyed = True
+            self.destroy()
             return False
         
         self.grounded = False

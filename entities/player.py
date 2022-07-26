@@ -6,11 +6,17 @@ from gui import trade_guis, get_trade
 
 
 class Player(Entity):
-    def __init__(self, *args, user=None):
-        super().__init__(*args)
+    def __init__(self, server, pos=(0, 0), user=None):
+        super().__init__( server, pos=(0, 0))
         assert user
         self.user = user
 
+        # I stole the names from minceraft, so what?
+        self.mode = "survival"
+
+        self.spawn()
+
+    def spawn(self):
         self.health = 10
         self.jump_power = 7
         self.move_power = 5
@@ -23,23 +29,20 @@ class Player(Entity):
             (-0.2, 1),
         ]
 
-        self.mouse_x = 0
-        self.mouse_y = 0
-        self.keys = set()
-        self.keys_just_down = set()
-
         self.reach = 4
 
         self.inventory = {}
         self.selected = 1
 
-        # I stole the names from minceraft, so what?
-        self.mode = "survival"
-
         self.ground_pounding = False
         self.ground_pound_speed = -10
 
         self.break_cooldown = Cooldown()
+
+    def destroy(self):
+        self.spawn()
+        self.x, self.y = self.server.get_world_spawn()
+        self.xv = self.yv = 0
 
     def damage(self, amount):
         if self.mode in ["survival"]:

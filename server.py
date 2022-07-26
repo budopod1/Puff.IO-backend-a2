@@ -1,5 +1,6 @@
 from worldgen import WorldGen
 from entities.zombie import Zombie
+from random import randint
 
 
 class Server:
@@ -11,6 +12,11 @@ class Server:
         self.worldgen.start()
 
         self.spawn(Zombie, 10) # TEMP
+
+    def get_world_spawn(self):
+        x = randint(-10, 10)
+        y = self.get_highest(x) + 0.01
+        return (x, y)
 
     def spawn(self, Entity, x):
         y = self.get_highest(x)
