@@ -30,7 +30,10 @@ class Player(Entity):
         ]
 
         self.reach = 4
-
+        self.attack_cooldown_length = 1
+        self.attack_cooldown = Cooldown(self.attack_cooldown_length)
+        self.attack_damage = 1
+        
         self.inventory = {}
         self.selected = 1
 
@@ -129,8 +132,13 @@ class Player(Entity):
                     self.can_interact(mouse_x, mouse_y):
                 self.interact(mouse_x, mouse_y)
 
-        if 3 in mouse_buttons and self.can_break(mouse_x, mouse_y):
-            self.break_(mouse_x, mouse_y)
+        if 3 in mouse_buttons:
+            entities = self.server.entities_at((mouse_x, mouse_y))
+            if self.can_break(mouse_x, mouse_y):
+                self.break_(mouse_x, mouse_y)
+            elif entities and entities[0] != self and self.attack_cooldown.expired():
+                self.attack_cooldown.start(self.attack_cooldown_length)
+                entities[0].damage(self.attack_damage)
 
         self.selected += self.user.scroll
         self.user.scroll = 0

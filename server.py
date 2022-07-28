@@ -54,8 +54,12 @@ class Server:
         x, y = pos
         return self.get_tile((round(x), round(y)))
 
-    def is_full(self, pos):
-        return self.collides(pos) or any([
-            entity.collides(pos)
+    def entities_at(self, pos):
+        return [
+            entity
             for entity in self.entities
-        ])
+            if entity.collides(pos)
+        ]
+
+    def is_full(self, pos):
+        return self.collides(pos) or len(self.entities_at(pos))

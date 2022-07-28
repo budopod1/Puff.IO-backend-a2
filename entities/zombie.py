@@ -15,7 +15,7 @@ class Zombie(Entity):
         self.attack_range = 2
         self.attack_cooldown_length = 2
         self.attack_cooldown = Cooldown(self.attack_cooldown_length)
-        self.damage_amount = 1.5
+        self.attack_damage = 1.5
         self.collider = [
             (-1, -1),
             (-1, 1),
@@ -42,7 +42,7 @@ class Zombie(Entity):
                 self.yv = self.jump_power
 
             if sqrt(diff_x ** 2 + diff_y ** 2) < self.attack_range and self.attack_cooldown.expired():
-                self.target.damage(self.damage_amount)
+                self.target.damage(self.attack_damage)
                 self.attack_cooldown.start(self.attack_cooldown_length)
         else:
             min_dist = self.detection_range
