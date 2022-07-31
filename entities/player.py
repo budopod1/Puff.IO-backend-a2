@@ -152,9 +152,9 @@ class Player(Entity):
     def attack(self, mouse_x, mouse_y):
         entities = self.server.entities_at((mouse_x, mouse_y))
         self.attack_cooldown.start(self.attack_cooldown_length)
-        entities[0].damage(self.attack_damage)
+        entities[0].damage(self.attack_damage * self.get_speed())
 
-    def get_break_speed(self):
+    def get_speed(self):
         return max([
             tile_names.inverse[item].BREAK_SPEED
             for item in self.inventory
@@ -228,7 +228,7 @@ class Player(Entity):
             tile = self.server.get_tile((x, y))
             self.server.set_tile((x, y), None)
             self.break_cooldown.start(
-                tile.BREAK_COOLDOWN / self.get_break_speed()
+                tile.BREAK_COOLDOWN / self.get_speed()
             )
             survival = self.mode in ["survival"]
             if survival:
