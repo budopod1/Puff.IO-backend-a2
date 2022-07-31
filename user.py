@@ -125,7 +125,7 @@ class User:
         health = self.player.get_health()
         if health != self.remembered_health or before:
             before = True
-            extra_data.insert(0, health)
+            extra_data.insert(0, max(health, 0))
             self.remembered_health = health
         
         if self.player.selected != self.remembered_selected or before:

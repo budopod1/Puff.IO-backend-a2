@@ -1,6 +1,9 @@
 from worldgen import WorldGen
+from entities.player import Player
 from entities.zombie import Zombie
-from random import randint
+from math import ceil
+from random import randint, random, choice
+from timer import Cooldown, Stopwatch
 
 
 class Server:
@@ -10,17 +13,18 @@ class Server:
         self.tilemap = {}
         self.worldgen = WorldGen(self.tilemap, self)
         self.worldgen.start()
-
-        self.spawn(Zombie, 10) # TEMP
+        self.monster_time_scale = 1
+        self.monster_cooldown = Cooldown(60 * 5 * self.monster_time_scale)
+        self.age = Stopwatch()
 
     def get_world_spawn(self):
         x = randint(-10, 10)
-        y = self.get_highest(x) + 0.01
+        y = self.get_highest(x)
         return (x, y)
 
-    def spawn(self, Entity, x):
+    def spawn(self, entity, x):
         y = self.get_highest(x)
-        entity = Entity(self, (x, y))
+        entity = entity(self, (x, y))
         self.entities.append(entity)
         return entity
 
@@ -35,13 +39,14 @@ class Server:
         while tile and tile.COLLISION:
             y += 1
             tile = self.get_tile((x, y))
-        return y
+        return y + 0.01
 
     def set_tile(self, pos, tile):
         self.tilemap[pos] = tile
 
     def tick(self):
         to_delete = []
+        self.monsters()
         for entity in self.entities:
             if entity.enabled:
                 entity.tick()
@@ -49,6 +54,22 @@ class Server:
                 to_delete.append(entity)
         for entity in to_delete:
             self.entities.remove(entity)
+
+    def monsters(self):
+        if self.monster_cooldown.expired():
+            self.monster_cooldown.start(
+                (60 + (random() - 0.5) * 30) * self.monster_time_scale
+            )
+            monster_num = ceil(self.age.time() / (60 * 10) * random())
+            for i in range(monster_num):
+                player = [
+                    entity
+                    for entity in self.entities
+                    if isinstance(entity, Player)
+                ]
+                if player:
+                    x_pos = choice(player).x + choice([-30, 30])
+                    self.spawn(choice([Zombie]), x_pos)
 
     def collides(self, pos):
         x, y = pos
