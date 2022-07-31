@@ -143,7 +143,7 @@ class Player(Entity):
         if self.selected >= max(tile_order):
             self.selected = 1
         elif self.selected <= 0:
-            self.selected = len(tile_order) - 1
+            self.selected = max(tile_order) - 1
 
     def can_attack(self, mouse_x, mouse_y):
         entities = self.server.entities_at((mouse_x, mouse_y))
