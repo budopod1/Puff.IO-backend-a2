@@ -14,6 +14,7 @@ class Server:
         self.worldgen = WorldGen(self.tilemap, self)
         self.worldgen.start()
         self.monster_time_scale = 1
+        self.mob_cap = 10
         self.monster_cooldown = Cooldown(60 * 5 * self.monster_time_scale)
         self.age = Stopwatch()
 
@@ -22,11 +23,17 @@ class Server:
         y = self.get_highest(x)
         return (x, y)
 
-    def spawn(self, entity, x):
-        y = self.get_highest(x)
-        entity = entity(self, (x, y))
-        self.entities.append(entity)
-        return entity
+    def spawn(self, entity_type, x):
+        same_type = len([
+            entity
+            for entity in self.entities
+            if isinstance(entity, entity_type)
+        ])
+        if same_type < self.mob_cap:
+            y = self.get_highest(x)
+            entity = entity_type(self, (x, y))
+            self.entities.append(entity)
+            return entity, True
 
     def get_tile(self, pos):
         if pos not in self.tilemap:
