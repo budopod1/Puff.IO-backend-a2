@@ -1,6 +1,6 @@
 from entities.entity import Entity
 from math import ceil
-from tiles import tile_names, tile_order
+from tiles import tile_order
 from timer import Cooldown
 from gui import trade_guis, get_trade
 
@@ -156,22 +156,19 @@ class Player(Entity):
 
     def get_speed(self):
         return max([
-            tile_names.inverse[item].BREAK_SPEED
+            item.BREAK_SPEED
             for item in self.inventory
         ], default=1)
 
     def try_trade(self, trade):
         take, give = trade
         for item, amount in take:
-            name = tile_names[item]
-            if not self.has_n_items(name, amount):
+            if not self.has_n_items(item, amount):
                 return False
         for item, amount in take:
-            name = tile_names[item]
-            self.remove_n_items(name, amount)
+            self.remove_n_items(item, amount)
         item, amount = give
-        name = tile_names[item]
-        self.add_n_items(name, amount)
+        self.add_n_items(item, amount)
         return True
 
     def can_interact(self, x, y):
@@ -200,7 +197,7 @@ class Player(Entity):
     def sorted_inventory(self):
         return sorted(
             self.inventory,
-            key=lambda k: tile_order.inverse[tile_names.inverse[k]]
+            key=lambda k: tile_order.inverse[k]
         )
 
     def remove_n_items(self, item, n):
@@ -232,7 +229,7 @@ class Player(Entity):
             )
             survival = self.mode in ["survival"]
             if survival:
-                self.collect_item(tile_names[tile.turn_to()])
+                self.collect_item(tile.break_becomes())
 
     def can_reach(self, x, y):
         creative = self.mode in ["creative"]
@@ -240,7 +237,7 @@ class Player(Entity):
 
     def selected_item(self):
         if self.inventory:
-            item = tile_names[tile_order[self.selected]]
+            item = tile_order[self.selected]
             return item if item in self.inventory else None
         return None
 
@@ -251,7 +248,7 @@ class Player(Entity):
                 self.inventory[item] -= 1
                 if self.inventory[item] == 0:
                     del self.inventory[item]
-            self.server.set_tile((x, y), tile_names.inverse[item]())
+            self.server.set_tile((x, y), item.place_becomes())
     
     def get_type(self):
         return 1

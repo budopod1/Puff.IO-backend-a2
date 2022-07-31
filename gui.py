@@ -1,6 +1,6 @@
 from tiles import Wood, Stone, Iron, Drill1, Drill2
 from utils import pad_list
-from tiles import Tile, Empty, Arrow, tile_names
+from tiles import Tile, Empty, Arrow
 from shortsocket import Array
 # TODO: Change gui to container
 
@@ -28,7 +28,7 @@ def inventory_gui(player):
     return make_gui(
         1,
         [
-            tile_names.inverse[item]
+            item
             for item in items
         ],
         amounts,

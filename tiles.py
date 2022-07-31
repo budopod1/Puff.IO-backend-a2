@@ -17,9 +17,14 @@ class Tile:
     def interact(self, player):
         name = type(self).__name__
         raise AttributeError(f"Tile {name} cannot be interacted with")
-
-    def turn_to(self):
-        return type(self)
+    
+    @classmethod
+    def break_becomes(cls):
+        return cls
+    
+    @classmethod
+    def place_becomes(cls):
+        return cls
 
 
 class Empty(Tile):
@@ -63,8 +68,9 @@ class Grass(Tile):
 class IronOre(Tile):
     BREAK_COOLDOWN = 4
     TYPE = 7
-
-    def turn_to(self):
+    
+    @classmethod
+    def break_becomes(cls):
         return Iron
 
 
@@ -99,7 +105,3 @@ tiles = [
     Leaves, Stone, Flowers, Trader1
 ]
 tile_order = bidict({tile.TYPE: tile for tile in tiles})
-tile_names = bidict({
-    tile: tile.__name__.lower()
-    for tile in tiles
-})
