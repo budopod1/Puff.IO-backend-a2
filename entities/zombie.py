@@ -1,6 +1,5 @@
 from entities.entity import Entity
 from entities.player import Player
-from math import sqrt
 from timer import Cooldown
 
 
@@ -35,13 +34,12 @@ class Zombie(Entity):
                 return
 
             diff_x = self.target.x - self.x
-            diff_y = self.target.y - self.y
             self.xv = diff_x / abs(diff_x) * self.move_power
 
             if self.walled and self.grounded:
                 self.yv = self.jump_power
 
-            if sqrt(diff_x ** 2 + diff_y ** 2) < self.attack_range and self.attack_cooldown.expired():
+            if self.within_range(self.target, self.attack_range) and self.attack_cooldown.expired():
                 self.target.damage(self.attack_damage)
                 self.attack_cooldown.start(self.attack_cooldown_length)
         else:

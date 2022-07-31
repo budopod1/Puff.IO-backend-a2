@@ -16,6 +16,17 @@ class Entity:
         ]
         self.health = 1
 
+    def within_range(self, obj, max_dist):
+        if isinstance(obj, tuple):
+            ox, oy = obj
+        else:
+            ox = obj.x
+            oy = obj.y
+            
+        diff_x = self.x - ox
+        diff_y = self.y - oy
+        return diff_x ** 2 + diff_y ** 2 <= max_dist ** 2
+
     def destroy(self):
         self.destroyed = True
 

@@ -1,5 +1,5 @@
 from entities.entity import Entity
-from math import sqrt, ceil
+from math import ceil
 from tiles import tile_names, tile_order
 from timer import Cooldown
 from gui import trade_guis, get_trade
@@ -133,12 +133,10 @@ class Player(Entity):
                 self.interact(mouse_x, mouse_y)
 
         if 3 in mouse_buttons:
-            entities = self.server.entities_at((mouse_x, mouse_y))
             if self.can_break(mouse_x, mouse_y):
                 self.break_(mouse_x, mouse_y)
-            elif entities and entities[0] != self and self.attack_cooldown.expired():
-                self.attack_cooldown.start(self.attack_cooldown_length)
-                entities[0].damage(self.attack_damage)
+            elif self.can_attack(mouse_x, mouse_y):
+                self.attack(mouse_x, mouse_y)
 
         self.selected += self.user.scroll
         self.user.scroll = 0
@@ -146,6 +144,15 @@ class Player(Entity):
             self.selected = 1
         elif self.selected <= 0:
             self.selected = len(tile_order) - 1
+
+    def can_attack(self, mouse_x, mouse_y):
+        entities = self.server.entities_at((mouse_x, mouse_y))
+        return entities and entities[0] != self and self.attack_cooldown.expired() and self.within_range(entities[0], self.reach)
+
+    def attack(self, mouse_x, mouse_y):
+        entities = self.server.entities_at((mouse_x, mouse_y))
+        self.attack_cooldown.start(self.attack_cooldown_length)
+        entities[0].damage(self.attack_damage)
 
     def get_break_speed(self):
         return max([
@@ -228,9 +235,8 @@ class Player(Entity):
                 self.collect_item(tile_names[tile.turn_to()])
 
     def can_reach(self, x, y):
-        distance = sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
         creative = self.mode in ["creative"]
-        return creative or distance < self.reach
+        return creative or self.within_range((x, y), self.reach)
 
     def selected_item(self):
         if self.inventory:
