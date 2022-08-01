@@ -1,4 +1,4 @@
-from tiles import Wood, Stone, Iron, Drill1, Drill2
+from tiles import Wood, Stone, Iron, Drill1, Drill2, Planks
 from utils import pad_list
 from tiles import Tile, Empty, Arrow
 from shortsocket import Array
@@ -7,7 +7,8 @@ from shortsocket import Array
 all_trades = {
     1: [
         (((Wood, 3), (Stone, 1)), (Drill1, 1)),
-        (((Drill1, 1), (Iron, 3)), (Drill2, 1))
+        (((Drill1, 1), (Iron, 3)), (Drill2, 1)),
+        (((Wood, 2),), (Planks, 1))
     ]
 }
 trade_guis = [2]

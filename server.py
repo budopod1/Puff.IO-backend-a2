@@ -40,13 +40,13 @@ class Server:
             self.worldgen.generate(pos)
         return self.tilemap[pos]
 
-    def get_highest(self, x):
+    def get_highest(self, x, stop_clip=True):
         y = -10
         tile = self.get_tile((x, y))
         while tile and tile.COLLISION:
             y += 1
             tile = self.get_tile((x, y))
-        return y + 0.01
+        return y + 0.01 if stop_clip else 0
 
     def set_tile(self, pos, tile):
         self.tilemap[pos] = tile

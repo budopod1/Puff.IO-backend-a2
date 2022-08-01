@@ -20,7 +20,8 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
         self.flower_wave = Wave(100, 10, 100, -0.5)
 
     def start(self):
-        self.tilemap[(0, self.server.get_highest(0))] = Trader1()
+        pos = (0, self.server.get_highest(0, False) + 1)
+        self.tilemap[pos] = Trader1()
 
     def generate(self, pos):
         x, y = pos

@@ -4,7 +4,7 @@ from bidict import bidict
 # Tiles are ordered as such:
 # * First default Tile (TYPE=0) class
 # * Then tiles with <0 TYPE are ordered alphabetically
-# * Then tiles with >0 TYPE are ordered alphabetically
+# * Finally tiles with >0 TYPE are ordered alphabetically
 
 class Tile:
     COLLISION = True
@@ -57,7 +57,7 @@ class Iron(Tile):
 class Flowers(Tile):
     COLLISION = False
     BREAK_COOLDOWN = 0
-    TYPE = 5
+    TYPE = 6
 
 
 class Grass(Tile):
@@ -67,7 +67,7 @@ class Grass(Tile):
 
 class IronOre(Tile):
     BREAK_COOLDOWN = 4
-    TYPE = 7
+    TYPE = 8
     
     @classmethod
     def break_becomes(cls):
@@ -76,19 +76,24 @@ class IronOre(Tile):
 
 class Leaves(Tile):
     BREAK_COOLDOWN = 0.1
-    TYPE = 3
+    TYPE = 4
 
 
 class Stone(Tile):
     BREAK_COOLDOWN = 2
-    TYPE = 4
+    TYPE = 2
+
+
+class Planks(Tile):
+    BREAK_COOLDOWN = 0.1
+    TYPE = 5
 
 
 class Trader1(Tile):
     COLLISION = False
     BREAK_COOLDOWN = 5
     INTERACTABLE = True
-    TYPE = 6
+    TYPE = 7
 
     def interact(self, player):
         player.user.gui = 2
@@ -97,11 +102,11 @@ class Trader1(Tile):
 class Wood(Tile):
     COLLISION = False
     BREAK_COOLDOWN = 0.5
-    TYPE = 2
+    TYPE = 3
 
 
 tiles = [
     Tile, Arrow, Drill1, Drill2, Iron, IronOre, Grass, Wood,
-    Leaves, Stone, Flowers, Trader1
+    Leaves, Stone, Flowers, Planks, Trader1
 ]
 tile_order = bidict({tile.TYPE: tile for tile in tiles})
