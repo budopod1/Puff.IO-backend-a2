@@ -102,6 +102,8 @@ async def start_server():
         80,
         process_request=health_check,
     ):
+        print("Server started!")
+        state.server_started = True
         await asyncio.Future()
 
 

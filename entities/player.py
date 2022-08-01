@@ -248,7 +248,7 @@ class Player(Entity):
                 self.inventory[item] -= 1
                 if self.inventory[item] == 0:
                     del self.inventory[item]
-            self.server.set_tile((x, y), item.place_becomes())
+            self.server.set_tile((x, y), item.place_becomes()())
     
     def get_type(self):
         return 1

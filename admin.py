@@ -1,5 +1,6 @@
 import traceback
 from entities.player import Player
+from time import sleep
 
 
 def exec_admin(command, state):
@@ -46,6 +47,8 @@ def exec_admin(command, state):
 
 
 def console(state):
+    while not state.server_started:
+        sleep(0.1)
     print("Admin Console")
     print("Type 'help' for help")
     repl_mode = False

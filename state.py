@@ -7,6 +7,7 @@ from timer import Timer
 
 class State:
     def __init__(self):
+        self.server_started = False
         self.users = {}
         self.servers = []
         self.main_server = self.add_server()
