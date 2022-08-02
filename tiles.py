@@ -1,4 +1,5 @@
 from bidict import bidict
+import random
 
 
 # Tiles are ordered as such:
@@ -38,19 +39,24 @@ class Arrow(Tile):
 
 
 class Drill1(Tile):
-    TYPE = -4
+    TYPE = -5
     PLACEABLE = False
     BREAK_SPEED = 2
 
 
 class Drill2(Tile):
-    TYPE = -5
+    TYPE = -6
     PLACEABLE = False
     BREAK_SPEED = 4
 
 
 class Iron(Tile):
     TYPE = -3
+    PLACEABLE = False
+
+
+class Mango(Tile):
+    TYPE = -4
     PLACEABLE = False
 
 
@@ -77,16 +83,23 @@ class IronOre(Tile):
 class Leaves(Tile):
     BREAK_COOLDOWN = 0.1
     TYPE = 4
-
-
-class Stone(Tile):
-    BREAK_COOLDOWN = 2
-    TYPE = 2
+    
+    @classmethod
+    def break_becomes(cls):
+        return random.choice([
+            *([Mango] * 1),
+            *([Leaves] * 3)
+        ])
 
 
 class Planks(Tile):
     BREAK_COOLDOWN = 0.1
     TYPE = 5
+
+
+class Stone(Tile):
+    BREAK_COOLDOWN = 2
+    TYPE = 2
 
 
 class Trader1(Tile):
@@ -106,7 +119,7 @@ class Wood(Tile):
 
 
 tiles = [
-    Tile, Arrow, Drill1, Drill2, Iron, IronOre, Grass, Wood,
+    Tile, Arrow, Mango, Drill1, Drill2, Iron, IronOre, Grass, Wood,
     Leaves, Stone, Flowers, Planks, Trader1
 ]
 tile_order = bidict({tile.TYPE: tile for tile in tiles})

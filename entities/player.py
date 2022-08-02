@@ -67,7 +67,7 @@ class Player(Entity):
         press_jump = 87 in self.user.keys_down
         up_and_down = press_ground_pound and press_jump
 
-        if 69 in self.user.keys_just_down:
+        if 32 in self.user.keys_just_down:
             if self.user.gui == 0:
                 self.user.gui = 1
             else:
@@ -78,8 +78,21 @@ class Player(Entity):
         mouse_buttons = self.user.mouse_buttons
         mouse_buttons_just_down = self.user.mouse_buttons_just_down
 
+        lmb = 1 in mouse_buttons
+        lmbjd = 1 in mouse_buttons_just_down
+        rmb = 3 in mouse_buttons or (
+            lmb and 16 in self.user.keys_down
+        )
+        if rmb:
+            lmb = False
+        rmbjs = 3 in mouse_buttons_just_down or (
+            lmbjd and 16 in self.user.keys_down
+        )
+        if rmbjs:
+            lmbjs = False
+
         if (self.user.gui in trade_guis and self.user.cell >= 0
-            and 1 in mouse_buttons_just_down):
+            and lmbjd):
             cell = self.user.cell
             i = 0
             while cell > 3:
@@ -96,6 +109,14 @@ class Player(Entity):
                     # the gui will immediatly reopen
                     mouse_buttons = set()
                     mouse_buttons_just_down = set()
+
+        if (self.user.gui == 1 and self.user.cell >= 0
+            and lmbjd):
+                inventory = self.sorted_inventory()
+                if self.user.cell < len(inventory):
+                    slot = inventory[self.user.cell]
+                    self.inventory[slot].select(self)
+            
         
         if self.user.gui:
             return
@@ -125,20 +146,23 @@ class Player(Entity):
         mouse_x = round(self.user.mouse_x)
         mouse_y = round(self.user.mouse_y)
         
-        if 1 in mouse_buttons:
+        if lmb:
             if self.can_place(mouse_x, mouse_y):
                 self.place(mouse_x, mouse_y, self.selected_item())
-            elif 1 in mouse_buttons_just_down and\
-                    self.can_interact(mouse_x, mouse_y):
+            elif lmbjd and self.can_interact(mouse_x, mouse_y):
                 self.interact(mouse_x, mouse_y)
 
-        if 3 in mouse_buttons:
+        if rmb:
             if self.can_break(mouse_x, mouse_y):
                 self.break_(mouse_x, mouse_y)
             elif self.can_attack(mouse_x, mouse_y):
                 self.attack(mouse_x, mouse_y)
 
         self.selected += self.user.scroll
+        if 81 in self.user.keys_just_down:
+            self.selected -= 1
+        elif 69 in self.user.keys_just_down:
+            self.selected += 1
         self.user.scroll = 0
         if self.selected >= max(tile_order):
             self.selected = 1
