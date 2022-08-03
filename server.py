@@ -41,7 +41,12 @@ class Server:
         return self.tilemap[pos]
 
     def get_highest(self, x, stop_clip=True):
-        y = -10
+        y = -15
+        while True:
+            if (x, y) in self.tilemap:
+                y -= 1
+            else:
+                break
         tile = self.get_tile((x, y))
         while tile and tile.COLLISION:
             y += 1
