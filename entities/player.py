@@ -1,6 +1,6 @@
 from entities.entity import Entity
 from math import ceil
-from tiles import tile_order
+from tiles import tile_hotbar_order, tile_inventory_order
 from timer import Cooldown
 from gui import trade_guis, get_trade
 
@@ -35,7 +35,7 @@ class Player(Entity):
         self.attack_damage = 1
         
         self.inventory = {}
-        self.selected = 1
+        self.selected = 0
 
         self.ground_pounding = False
         self.ground_pound_speed = -10
@@ -85,9 +85,7 @@ class Player(Entity):
         )
         if rmb:
             lmb = False
-        rmbjs = 3 in mouse_buttons_just_down or (
-            lmbjd and 16 in self.user.keys_down
-        )
+        rmbjs = 3 in mouse_buttons_just_down or (lmbjd and 16 in self.user.keys_down)
         if rmbjs:
             lmbjs = False
 
@@ -114,8 +112,7 @@ class Player(Entity):
             and lmbjd):
                 inventory = self.sorted_inventory()
                 if self.user.cell < len(inventory):
-                    slot = inventory[self.user.cell]
-                    self.inventory[slot].select(self)
+                    inventory[self.user.cell].select(self)
             
         
         if self.user.gui:
@@ -164,10 +161,10 @@ class Player(Entity):
         elif 69 in self.user.keys_just_down:
             self.selected += 1
         self.user.scroll = 0
-        if self.selected >= max(tile_order):
-            self.selected = 1
-        elif self.selected <= 0:
-            self.selected = max(tile_order) - 1
+        if self.selected > max(tile_hotbar_order):
+            self.selected = 0
+        elif self.selected < 0:
+            self.selected = max(tile_hotbar_order)
 
     def can_attack(self, mouse_x, mouse_y):
         entities = self.server.entities_at((mouse_x, mouse_y))
@@ -221,7 +218,7 @@ class Player(Entity):
     def sorted_inventory(self):
         return sorted(
             self.inventory,
-            key=lambda k: tile_order.inverse[k]
+            key=lambda k: tile_inventory_order.inverse[k]
         )
 
     def remove_n_items(self, item, n):
@@ -253,7 +250,9 @@ class Player(Entity):
             )
             survival = self.mode in ["survival"]
             if survival:
-                self.collect_item(tile.break_becomes())
+                becomes = tile.break_becomes()
+                if becomes is not None:
+                    self.collect_item(becomes)
 
     def can_reach(self, x, y):
         creative = self.mode in ["creative"]
@@ -261,7 +260,7 @@ class Player(Entity):
 
     def selected_item(self):
         if self.inventory:
-            item = tile_order[self.selected]
+            item = tile_hotbar_order[self.selected]
             return item if item in self.inventory else None
         return None
 

@@ -18,6 +18,10 @@ class Tile:
     def interact(self, player):
         name = type(self).__name__
         raise AttributeError(f"Tile {name} cannot be interacted with")
+
+    @staticmethod
+    def select(player):
+        pass
     
     @classmethod
     def break_becomes(cls):
@@ -39,24 +43,19 @@ class Arrow(Tile):
 
 
 class Drill1(Tile):
-    TYPE = -5
+    TYPE = -3
     PLACEABLE = False
     BREAK_SPEED = 2
 
 
 class Drill2(Tile):
-    TYPE = -6
+    TYPE = -4
     PLACEABLE = False
     BREAK_SPEED = 4
 
 
 class Iron(Tile):
     TYPE = -3
-    PLACEABLE = False
-
-
-class Mango(Tile):
-    TYPE = -4
     PLACEABLE = False
 
 
@@ -73,14 +72,27 @@ class Grass(Tile):
 
 class IronOre(Tile):
     BREAK_COOLDOWN = 4
-    TYPE = 8
+    TYPE = 9
     
     @classmethod
     def break_becomes(cls):
         return Iron
 
 
-class Leaves(Tile):
+class Mango(Tile):
+    TYPE = 7
+
+    @classmethod
+    def place_becomes(cls):
+        return Sapling
+    
+    @staticmethod
+    def select(player):
+        player.remove_n_items(Mango, 1)
+        player.health = player.health + 2
+
+
+class Leaves(Tile): # Add decorative leaves for broken leaves
     BREAK_COOLDOWN = 0.1
     TYPE = 4
     
@@ -97,6 +109,16 @@ class Planks(Tile):
     TYPE = 5
 
 
+class Sapling(Tile):
+    BREAK_COOLDOWN = 0.05
+    TYPE = 10
+    COLLISION = False
+    
+    @classmethod
+    def break_becomes(cls):
+        return None
+
+
 class Stone(Tile):
     BREAK_COOLDOWN = 2
     TYPE = 2
@@ -106,7 +128,7 @@ class Trader1(Tile):
     COLLISION = False
     BREAK_COOLDOWN = 5
     INTERACTABLE = True
-    TYPE = 7
+    TYPE = 8
 
     def interact(self, player):
         player.user.gui = 2
@@ -120,6 +142,12 @@ class Wood(Tile):
 
 tiles = [
     Tile, Arrow, Mango, Drill1, Drill2, Iron, IronOre, Grass, Wood,
-    Leaves, Stone, Flowers, Planks, Trader1
+    Leaves, Stone, Flowers, Planks, Sapling, Trader1
 ]
-tile_order = bidict({tile.TYPE: tile for tile in tiles})
+tile_inventory_order = bidict({i: item for i, item in enumerate([
+    Tile, Arrow, Drill1, Drill2, Iron, IronOre, Grass,
+    Stone, Wood, Planks, Mango, Sapling, Leaves, Flowers, Trader1
+])})
+tile_hotbar_order = bidict({i: item for i, item in enumerate([
+    Grass, Stone, Wood, Planks, Mango, Leaves, Flowers, Trader1
+])})

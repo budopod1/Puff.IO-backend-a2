@@ -4,6 +4,7 @@ from shortsocket import Array
 from timer import Stopwatch
 from functools import lru_cache
 from gui import guis
+from tiles import tile_hotbar_order
 
 
 class User:
@@ -130,7 +131,7 @@ class User:
         
         if self.player.selected != self.remembered_selected or before:
             before = True
-            extra_data.insert(0, self.player.selected)
+            extra_data.insert(0, tile_hotbar_order[self.player.selected].TYPE)
             self.remembered_selected = self.player.selected
         
         player_index = None
