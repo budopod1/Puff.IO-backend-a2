@@ -21,7 +21,16 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
 
     def start(self):
         pos = (0, self.server.get_highest(0, False) + 1)
-        self.tilemap[pos] = Trader1()
+        self.server.set_tile(pos, Trader1())
+
+    def gen_tree(self, pos):
+        x, y = pos
+        set_tile = self.server.set_tile
+        for o in range(random.randint(3, 7)):
+            set_tile((x, y + o), Wood())
+        set_tile((x + 1, y + o), Leaves())
+        set_tile((x - 1, y + o), Leaves())
+        set_tile((x, y + o + 1), Leaves())
 
     def generate(self, pos):
         x, y = pos
@@ -43,12 +52,8 @@ class WorldGen: # https://www.desmos.com/calculator/xy1dflbuac
                 isinstance(self.server.get_tile((x, y - 1)), Grass):
             if random.random() < tree_prob:
                 block = Wood()
-                for o in range(random.randint(3, 7)):
-                    self.tilemap[(x, y + o)] = Wood()
-                self.tilemap[(x + 1, y + o)] = Leaves()
-                self.tilemap[(x - 1, y + o)] = Leaves()
-                self.tilemap[(x, y + o + 1)] = Leaves()
+                self.gen_tree((x, y))
             elif random.random() < flower_prob:
                 block = Flowers()
-        self.tilemap[pos] = block
+        self.server.set_tile(pos, block)
         

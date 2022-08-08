@@ -11,6 +11,7 @@ class Server:
         self.state = state
         self.entities = []
         self.tilemap = {}
+        self.ticker_tiles = {}
         self.worldgen = WorldGen(self.tilemap, self)
         self.worldgen.start()
         self.monster_time_scale = 1
@@ -54,11 +55,17 @@ class Server:
         return y + 0.01 if stop_clip else 0
 
     def set_tile(self, pos, tile):
+        if tile and tile.TICKER:
+            self.ticker_tiles[pos] = tile
+        elif pos in self.tilemap:  # Check the old tile
+            old_tile = self.tilemap[pos]
+            if old_tile and old_tile.TICKER:
+                del self.ticker_tiles[pos]
         self.tilemap[pos] = tile
 
     def tick(self):
-        to_delete = []
         self.monsters()
+        to_delete = []
         for entity in self.entities:
             if entity.enabled:
                 entity.tick()
@@ -66,6 +73,8 @@ class Server:
                 to_delete.append(entity)
         for entity in to_delete:
             self.entities.remove(entity)
+        for pos, tile in list(self.ticker_tiles.items()):
+            tile.tick(pos, self)
 
     def monsters(self):
         if self.monster_cooldown.expired():

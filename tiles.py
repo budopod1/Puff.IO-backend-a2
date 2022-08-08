@@ -14,6 +14,7 @@ class Tile:
     TYPE = 0
     PLACEABLE = True
     BREAK_SPEED = 1
+    TICKER = False
 
     def interact(self, player):
         name = type(self).__name__
@@ -30,6 +31,9 @@ class Tile:
     @classmethod
     def place_becomes(cls):
         return cls
+
+    def tick(self, pos, server):
+        pass
 
 
 class Empty(Tile):
@@ -113,10 +117,15 @@ class Sapling(Tile):
     BREAK_COOLDOWN = 0.05
     TYPE = 10
     COLLISION = False
+    TICKER = True
     
     @classmethod
     def break_becomes(cls):
         return None
+
+    def tick(self, pos, server):
+        if random.random() / server.state.timer.time_delta < 1/300:
+            server.worldgen.gen_tree(pos)
 
 
 class Stone(Tile):
