@@ -5,10 +5,13 @@ from timer import Stopwatch
 from functools import lru_cache
 from gui import guis
 from tiles import tile_hotbar_order
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User:
-    def __init__(self, server, username):
+    def __init__(self, server, username, password):
+        self.password = generate_password_hash(password)
+        
         self.player = Player(server, (0, 0), user=self)
         self.server = None
         self.user_positions = {}
@@ -47,6 +50,15 @@ class User:
         self.used_ids = []
 
         self.gui = 0
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    def reset(self):
+        self.remembered_tilemap = {}
+        self.remembered_selected = 0
+        self.remembered_health = 0
+        self.remembered_player_index = 0
 
     @lru_cache(maxsize=255)
     def get_entity_id(self, entity):

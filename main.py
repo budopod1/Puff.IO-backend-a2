@@ -4,11 +4,12 @@ import json
 import shortsocket
 from state import State
 from threading import Thread
-from uuid import uuid4
+# from uuid import uuid4
 from websockets.exceptions import WebSocketException
 from http import HTTPStatus
 import struct
 from admin import console
+import re
 # from timer import Stopwatch
 # from shortsocket import Array
 
@@ -28,9 +29,38 @@ def create_packet(data, response):
     return msg_type + shortsocket.encode(data)
 
 
+LOGIN = re.compile("login:(\w{3,20}),(\w{5,50});")
+SIGNUP = re.compile("signup:(\w{3,20}),(\w{5,50});")
+
+
 async def serve(websocket):
+    # TODO: Verify client packets
     try:
-        client = state.create_user(uuid4())
+        client = None
+        while True:
+            message = await websocket.recv()
+            if isinstance(message, bytes):
+                try:
+                    message = message.decode("UTF-8")
+                except UnicodeDecodeError:
+                    message = ""
+            login = LOGIN.fullmatch(message)
+            signup = SIGNUP.fullmatch(message)
+            if message == "ready":
+                if client is not None:
+                    await websocket.send(create_status({
+                        "action": "ready"
+                    }))
+                    break
+            elif login:
+                client, msg = state.authorize(login.group(1), login.group(2))
+                await websocket.send(create_status(msg))
+            elif signup:
+                client, msg = state.create_user(signup.group(1), signup.group(2))
+                await websocket.send(create_status(msg))
+
+        # client = state.create_user(uuid4())
+        client.reset()
         keys = set()
         mouse_buttons = set()
         mouse_x = 0
@@ -40,11 +70,7 @@ async def serve(websocket):
         async for message in websocket:
             if isinstance(message, str):
                 message = message.encode("UTF-8")
-            if message == b"connect":
-                await websocket.send(create_status({
-                    "action": "connect"
-                }))
-            elif message == b"exit":
+            if message == b"exit":
                 await websocket.close()
             else:
                 msg_type = message[0]

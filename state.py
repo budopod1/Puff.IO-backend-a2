@@ -19,11 +19,20 @@ class State:
         self.servers.append(new_server)
         return new_server
 
-    def create_user(self, username):
-        assert username not in self.users, f"User {username} already exists"
-        new_user = User(self.main_server, username)
+    def create_user(self, username, password):
+        if username in self.users:
+            return None, {"success": False, "message": "That username is taken"}
+        new_user = User(self.main_server, username, password)
         self.users[username] = new_user
-        return new_user
+        return new_user, {"success": True, "message": ""}
+
+    def authorize(self, username, password):
+        if username not in self.users:
+            return None, {"success": False, "message": "Incorrect username"}
+        user = self.users[username]
+        if user.check_password(password):
+            return user, {"success": True, "message": ""}
+        return None, {"success": False, "message": "Incorrect password"}
 
     def tick(self):
         self.timer.tick()
