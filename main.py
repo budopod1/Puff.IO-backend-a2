@@ -10,6 +10,7 @@ from http import HTTPStatus
 import struct
 from admin import console
 import re
+import save
 # from timer import Stopwatch
 # from shortsocket import Array
 
@@ -18,6 +19,7 @@ state = None
 
 tick_thread = None
 admin_thread = None
+save_thread = None
 
 
 def create_status(data):
@@ -111,6 +113,7 @@ async def serve(websocket):
 
 
 def ticking():
+    # TODO: Move to state.py
     global state
     while True:
         state.tick()
@@ -118,7 +121,11 @@ def ticking():
 
 async def health_check(path, request_headers):
     if path != "/ws":
-        return HTTPStatus.FOUND, {"Location": "https://puffio.repl.co" + path}, b""
+        return (
+            HTTPStatus.FOUND, 
+            {"Location": "https://puffio.repl.co" + path}, 
+            b""
+        )
 
 
 async def start_server():
@@ -134,15 +141,22 @@ async def start_server():
 
 
 def main():
-    global state, tick_thread, admin_thread
+    global state, tick_thread, admin_thread, save_thread
     try:
-        state = State()
+        save.setup()
+        
+        state = save.load()
+        if state is None:
+            state = State()
         
         tick_thread = Thread(target=ticking)
         tick_thread.start()
         
         admin_thread = Thread(target=console, args=(state,))
         admin_thread.start()
+
+        save_thread = Thread(target=save.repeat_save, args=(state,))
+        save_thread.start()
         
         asyncio.run(start_server())
     except Exception as e:
